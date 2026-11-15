@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Mono</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#0a0a0a; font-size:9.5pt; line-height:1.4;
+         -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { page-break-after:always; padding:16mm 15mm; }
+  .page:last-child { page-break-after:auto; }
+
+  .masthead { border-bottom:3px solid #0a0a0a; padding-bottom:10px; margin-bottom:16px;
+              display:flex; justify-content:space-between; align-items:flex-end; }
+  .masthead .brand { font-size:20pt; font-weight:900; letter-spacing:-.5px; }
+  .masthead .brand span { color:#dc2626; }
+  .masthead .ed { font-size:8pt; text-transform:uppercase; letter-spacing:2px; color:#555; }
+
+  h1 { font-size:34pt; font-weight:900; line-height:1.05; letter-spacing:-1px; margin:6mm 0; }
+  h1 .red { color:#dc2626; }
+  .lede { font-size:11pt; color:#333; max-width:82%; border-left:4px solid #dc2626; padding-left:12px; }
+
+  .nums { display:grid; grid-template-columns:repeat(3,1fr); border-top:2px solid #0a0a0a;
+          border-bottom:2px solid #0a0a0a; margin:14px 0; }
+  .num { padding:12px 14px; border-right:1px solid #ddd; }
+  .num:last-child { border-right:none; }
+  .num b { display:block; font-size:24pt; font-weight:900; letter-spacing:-1px; }
+  .num b i { font-style:normal; color:#dc2626; }
+  .num span { font-size:8pt; text-transform:uppercase; letter-spacing:1.5px; color:#555; }
+
+  h2 { font-size:13pt; font-weight:900; text-transform:uppercase; letter-spacing:1px;
+       margin:16px 0 8px; }
+  h2::before { content:"— "; color:#dc2626; }
+
+  .facts { display:grid; grid-template-columns:1fr 1fr; gap:0 24px; }
+  .fact { border-top:1.5px solid #0a0a0a; padding:8px 0; }
+  .fact b { display:block; font-size:10pt; }
+  .fact p { font-size:9pt; color:#444; }
+
+  .diagram { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center; }
+  .box { border:2.5px solid #0a0a0a; border-radius:8px; padding:12px 14px; text-align:center;
+         font-weight:800; font-size:10.5pt; text-transform:uppercase; letter-spacing:1px; }
+  .box small { display:block; font-weight:400; text-transform:none; letter-spacing:0;
+               font-size:8.5pt; color:#555; margin-top:4px; }
+  .flowline { display:flex; align-items:center; justify-content:center; gap:8px; margin:8px 0; }
+  .flowline .bar { width:60px; height:2.5px; background:#0a0a0a; }
+  .flowline .arr { font-weight:900; font-size:14pt; }
+
+  .pull { border-top:3px solid #0a0a0a; border-bottom:3px solid #0a0a0a;
+          padding:16px 6px; margin-top:16px; font-size:13pt; font-weight:700; line-height:1.5; }
+  .pull .red { color:#dc2626; }
+  .sig { font-size:8.5pt; color:#777; margin-top:8px; text-transform:uppercase; letter-spacing:2px; }
+
+  .gridlines { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1.5px solid #0a0a0a; }
+  .cell { padding:10px 12px; border-right:1px solid #ddd; }
+  .cell:last-child { border-right:none; }
+  .cell b { display:block; font-size:10pt; letter-spacing:1px; }
+  .cell.ok b::after { content:" ●"; color:#16a34a; font-size:8pt; }
+  .cell.warn b::after { content:" ●"; color:#b45309; font-size:8pt; }
+  .cell.bad b::after { content:" ●"; color:#dc2626; font-size:8pt; }
+  .cell.note b::after { content:" ●"; color:#84cc16; font-size:8pt; }
+  .cell p { font-size:8pt; color:#555; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="masthead">
+    <div class="brand">ASTRO<span>-TRIAGE</span></div>
+    <div class="ed">NASA Space Apps 2026 · Edición de misión</div>
+  </div>
+
+  <h1>EL MÉDICO LLEGA<br>EN 20 MINUTOS.<br><span class="red">EL JUEGO, EN 5 SEGUNDOS.</span></h1>
+  <p class="lede">La salud de la tripulación no puede esperar un enlace a Tierra. La vigilamos mientras juegan.</p>
+
+  <div class="nums">
+    <div class="num"><b>20<i>min</i></b><span>retraso del enlace médico</span></div>
+    <div class="num"><b>60<i>s</i></b><span>que dura nuestro “examen”</span></div>
+    <div class="num"><b>18</b><span>protocolos NASA consultados</span></div>
+  </div>
+  <div class="nums" style="border-top:none">
+    <div class="num"><b>0</b><span>formularios que rellenar</span></div>
+    <div class="num"><b>0</b><span>bytes enviados fuera</span></div>
+    <div class="num"><b>1</b><span>decisión con color y pasos</span></div>
+  </div>
+
+  <h2>Cómo</h2>
+  <div>
+    <div class="box">JUEGA 60 SEGUNDOS<small>cartas de reacción — mide reflejos, atención, errores</small></div>
+    <div class="flowline"><span class="arr">↓</span></div>
+    <div class="box">LA CÁMARA LEE<small>parpadeos · bostezos · tensión · pulso · mirada</small></div>
+    <div class="flowline"><span class="arr">↓</span></div>
+    <div class="box" style="background:#0a0a0a;color:#fff">VEREDICTO<small style="color:#ccc">color + 3 acciones citando protocolos NASA</small></div>
+  </div>
+
+  <h2>La respuesta del sistema</h2>
+  <div class="gridlines">
+    <div class="cell ok"><b>NOMINAL</b><p>Mantén tu plan.</p></div>
+    <div class="cell note"><b>VERDE</b><p>Observar.</p></div>
+    <div class="cell warn"><b>ÁMBAR</b><p>Actuar hoy.</p></div>
+    <div class="cell bad"><b>ROJO</b><p>Emergencia.</p></div>
+  </div>
+</div>
+
+<div class="page">
+  <h2>Los hechos</h2>
+  <div class="facts">
+    <div class="fact"><b>El examen es un juego</b><p>Nadie pospone lo que quiere hacer. La constancia es la cobertura.</p></div>
+    <div class="fact"><b>Nada sale de la nave</b><p>Análisis 100% a bordo. La salud mental es privada.</p></div>
+    <div class="fact"><b>Se compara contigo</b><p>Línea base individual, tendencia de 14 días — estándar NASA.</p></div>
+    <div class="fact"><b>Cada acción, su fuente</b><p>18 protocolos NASA-STD-3001 · IMG · BHP — nada inventado.</p></div>
+    <div class="fact"><b>Si un sensor cae, sigue</b><p>Decide con lo que tiene. Nunca deja a la tripulación sin respuesta.</p></div>
+    <div class="fact"><b>También calma</b><p>Respiración 4-7-8 guiada cuando el estrés lo amerita.</p></div>
+  </div>
+
+  <h2>Lo que mide</h2>
+  <div class="facts">
+    <div class="fact"><b>Reflejos en el juego</b><p>tiempo de reacción y lapsos — mente cansada</p></div>
+    <div class="fact"><b>Parpadeos y párpados</b><p>sueño acumulado real</p></div>
+    <div class="fact"><b>Bostezos</b><p>fatiga diurna</p></div>
+    <div class="fact"><b>Lados de la cara</b><p>alerta neurológica — lo más grave</p></div>
+    <div class="fact"><b>Pulso en video</b><p>estrés cardiovascular</p></div>
+    <div class="fact"><b>Mirada</b><p>desconexión</p></div>
+    <div class="fact"><b>Ánimo + síntomas</b><p>3 toques: energía, sueño, equipo, dolor</p></div>
+    <div class="fact"><b>Tendencia 14 días</b><p>tú contra tu propia línea base</p></div>
+  </div>
+
+  <div class="pull">
+    «El astronauta no hace un examen. <span class="red">Juega un minuto</span> — y la nave aprende cómo está. Un color, tres pasos, protocolos reales. <span class="red">Sin internet, sin médico, sin excusas.</span>»
+    <div class="sig">Astro-Triage — copiloto de salud invisible · NASA Space Apps Challenge 2026</div>
+  </div>
+</div>
+
+</body>
+</html>

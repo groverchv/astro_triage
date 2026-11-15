@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Mission Control</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; background:#050b14; color:#cfe6f5;
+         font-size:9.5pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { page-break-after:always; padding:15mm 14mm; min-height:282mm; }
+  .page:last-child { page-break-after:auto; }
+  .mono { font-family:Consolas,"Courier New",monospace; }
+
+  .topbar { display:flex; justify-content:space-between; align-items:center;
+            border-bottom:1px solid #12334d; padding-bottom:8px; margin-bottom:14px; }
+  .topbar .l { color:#22d3ee; font-size:8.5pt; letter-spacing:3px; }
+  .topbar .r { color:#4b7ea0; font-size:8pt; letter-spacing:1px; }
+
+  h1 { font-size:34pt; font-weight:800; letter-spacing:2px; color:#fff; margin:10mm 0 4mm; }
+  h1 em { font-style:normal; color:#22d3ee; }
+  .lede { font-size:11pt; color:#8fb8cf; max-width:80%; margin-bottom:8mm; }
+
+  .threat { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:6mm; }
+  .t { border:1px solid #12334d; border-top:3px solid #ef4444; border-radius:6px;
+       padding:10px 12px; background:#081120; }
+  .t b { color:#fca5a5; display:block; font-size:9.5pt; margin-bottom:3px; }
+  .t p { font-size:8.5pt; color:#7fa3bb; }
+
+  h2 { font-size:11pt; color:#22d3ee; letter-spacing:2px; text-transform:uppercase;
+       border-left:3px solid #22d3ee; padding-left:10px; margin:9mm 0 5mm; }
+  h2 .sub { color:#4b7ea0; font-weight:400; letter-spacing:.5px; text-transform:none; }
+
+  /* secuencia T-minus */
+  .seq { border-left:2px solid #12334d; margin-left:8px; }
+  .ev { position:relative; padding:0 0 16px 24px; }
+  .ev::before { content:""; position:absolute; left:-7px; top:2px; width:12px; height:12px;
+                border-radius:50%; background:#050b14; border:2px solid #22d3ee; }
+  .ev .t0 { font-family:Consolas,monospace; color:#22d3ee; font-size:8.5pt; letter-spacing:1px; }
+  .ev b { color:#fff; font-size:10.5pt; display:block; margin:2px 0; }
+  .ev p { font-size:8.5pt; color:#7fa3bb; max-width:88%; }
+
+  /* telemetría */
+  .tele { width:100%; border-collapse:collapse; }
+  .tele td { border-bottom:1px solid #0e2438; padding:6px 10px; font-size:9pt; }
+  .tele td:first-child { color:#22d3ee; font-family:Consolas,monospace; white-space:nowrap; }
+  .tele td:last-child { color:#9fc3d8; }
+
+  /* medidores */
+  .gauges { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .g { text-align:center; border:1px solid #12334d; border-radius:8px; padding:10px 6px; background:#081120; }
+  .g b { display:block; font-size:9.5pt; letter-spacing:1px; margin-top:4px; }
+  .g span { font-size:7.5pt; color:#7fa3bb; display:block; }
+
+  .callout { border:1px solid #b45309; background:rgba(180,83,9,.12); border-radius:8px;
+             padding:10px 14px; margin-top:8mm; font-size:9.5pt; color:#fcd9a8; }
+
+  .transcript { border:1px solid #12334d; border-radius:8px; background:#081120; padding:14px 16px; margin-top:6mm; }
+  .transcript .line { font-family:Consolas,monospace; font-size:9pt; margin-bottom:9px; color:#cfe6f5; }
+  .transcript .who { color:#22d3ee; }
+  .moon { float:right; width:70px; height:70px; border-radius:50%; object-fit:cover;
+          margin-left:14px; box-shadow:0 0 24px rgba(120,170,200,.35); }
+  .foot { margin-top:10mm; border-top:1px solid #12334d; padding-top:8px;
+          color:#4b7ea0; font-size:8pt; letter-spacing:1px; display:flex; justify-content:space-between; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="topbar"><span class="l">ASTRO-TRIAGE // CONSOLA DE MISIÓN</span><span class="r">NASA SPACE APPS 2026</span></div>
+
+  <img class="moon" src="../frontend/assets/moon.jpg" alt="">
+  <h1>SALUD DE TRIPULACIÓN,<br><em>SIN MÉDICO A BORDO.</em></h1>
+  <p class="lede">Un copiloto invisible que convierte el chequeo diario en un minuto de juego — y responde con un veredicto operativo antes de que el problema crezca.</p>
+
+  <div class="threat">
+    <div class="t"><b>20 MIN DE SILENCIO</b><p>El enlace Tierra–Marte llega demasiado tarde para una emergencia médica.</p></div>
+    <div class="t"><b>5 PELIGROS NASA</b><p>Radiación, aislamiento, distancia, gravedad, ambiente cerrado — todos atacan la salud.</p></div>
+    <div class="t"><b>TESTS OMITIDOS</b><p>Los exámenes tediosos se posponen; lo que no se mide, se descubre tarde.</p></div>
+  </div>
+
+  <h2>Secuencia de misión <span class="sub">— lo que vive el astronauta</span></h2>
+  <div class="seq">
+    <div class="ev"><span class="t0">T+00:00</span><b>Abre la consola</b><p>Los sensores ya están listos. Nada que configurar, nada que firmar.</p></div>
+    <div class="ev"><span class="t0">T+00:05</span><b>Pulsa JUGAR</b><p>Comienza una partida de cartas de reacción. El sistema observa en silencio.</p></div>
+    <div class="ev"><span class="t0">T+01:00</span><b>Fin de la partida</b><p>Sin pulsar nada: señales analizadas, tres preguntas de ánimo, veredicto en pantalla.</p></div>
+    <div class="ev"><span class="t0">T+01:10</span><b>Plan de acción</b><p>Un color y tres pasos citando protocolos NASA. Si hace falta, respiración guiada 4-7-8.</p></div>
+  </div>
+
+  <h2>Niveles de alerta <span class="sub">— lectura de instrumento</span></h2>
+  <div class="gauges">
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 18 9.6" fill="none" stroke="#22c55e" stroke-width="5"/><circle cx="14" cy="20" r="3.4" fill="#22c55e"/></svg><b style="color:#22c55e">NOMINAL</b><span>sigue el plan</span></div>
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 30 6.4" fill="none" stroke="#a3e635" stroke-width="5"/><circle cx="30" cy="9" r="3.4" fill="#a3e635"/></svg><b style="color:#a3e635">VERDE</b><span>vigilar</span></div>
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 44 9" fill="none" stroke="#f59e0b" stroke-width="5"/><circle cx="44" cy="10" r="3.4" fill="#f59e0b"/></svg><b style="color:#f59e0b">ÁMBAR</b><span>actuar hoy</span></div>
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#ef4444" stroke-width="5"/><circle cx="52" cy="24" r="3.4" fill="#ef4444"/></svg><b style="color:#ef4444">ROJO</b><span>emergencia</span></div>
+  </div>
+
+  <div class="callout">REGLA DE MISIÓN — el examen no puede depender de la disciplina. Por eso es un juego: la tripulación quiere abrirlo.</div>
+
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>ANÁLISIS 100% A BORDO · CANAL PRIVADO</span></div>
+</div>
+
+<div class="page">
+  <div class="topbar"><span class="l">TELEMETRÍA BIOMÉDICA</span><span class="r">SEÑALES CAPTURADAS</span></div>
+
+  <h2>Canal de sensores <span class="sub">— pasivo, sin hardware extra</span></h2>
+  <table class="tele">
+    <tr><td>CAM · PARPADEO</td><td>frecuencia + duración → deuda de sueño</td></tr>
+    <tr><td>CAM · PERCLOS</td><td>ojos medio cerrados → somnolencia real</td></tr>
+    <tr><td>CAM · BOSTEZOS</td><td>conteo por sesión → fatiga diurna</td></tr>
+    <tr><td>CAM · ASIMETRÍA</td><td>lados de la cara distintos → alerta neurológica</td></tr>
+    <tr><td>CAM · rPPG</td><td>pulso y variabilidad → estrés cardiovascular</td></tr>
+    <tr><td>CAM · MIRADA</td><td>tiempo fuera de pantalla → desconexión</td></tr>
+    <tr><td>JUEGO · LATENCIA</td><td>reacción + lapsos &gt;500 ms → reflejos lentos</td></tr>
+    <tr><td>JUEGO · ERRORES</td><td>precisión → atención degradada</td></tr>
+    <tr><td>VOZ DEL DÍA</td><td>3 toques: ánimo · sueño · equipo + síntomas</td></tr>
+  </table>
+
+  <h2>Motor de decisión <span class="sub">— evidencia, no intuición</span></h2>
+  <table class="tele">
+    <tr><td>LÍNEA BASE</td><td>cada astronauta contra su propio historial — estándar NASA</td></tr>
+    <tr><td>CONOCIMIENTO</td><td>18 protocolos indexados: NASA-STD-3001 · checklists IMG · BHP conductual</td></tr>
+    <tr><td>RESPALDO</td><td>cada acción cita su protocolo — nada se inventa</td></tr>
+    <tr><td>DEGRADADO</td><td>si un sensor falla, decide con el resto — nunca silencio</td></tr>
+  </table>
+
+  <h2>Transmisión al jurado <span class="sub">— pitch de 90 segundos</span></h2>
+  <div class="transcript">
+    <div class="line"><span class="who">[00:00]</span> Houston no puede contestar en veinte minutos. La nave sí.</div>
+    <div class="line"><span class="who">[00:15]</span> Astro-Triage convierte el chequeo médico diario en una partida de cartas de un minuto.</div>
+    <div class="line"><span class="who">[00:35]</span> Mientras se juega, la cámara lee parpadeos, bostezos, tensión, pulso y mirada; el juego lee reflejos y atención.</div>
+    <div class="line"><span class="who">[00:55]</span> Al terminar, sin un solo botón, cruzamos esas señales con dieciocho protocolos NASA y respondemos en color y tres pasos.</div>
+    <div class="line"><span class="who">[01:15]</span> Cien por cien a bordo. Cero bytes transmitidos. La autonomía médica no es un lujo: es la misión.</div>
+  </div>
+
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>FIN DE TRANSMISIÓN</span></div>
+</div>
+
+</body>
+</html>

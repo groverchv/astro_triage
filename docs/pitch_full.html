@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Dossier de misión</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; background:#050b14; color:#cfe6f5;
+         font-size:9.5pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { page-break-after:always; padding:14mm 14mm 12mm; min-height:283mm; display:flex; flex-direction:column; }
+  .page:last-child { page-break-after:auto; }
+
+  .topbar { display:flex; justify-content:space-between; align-items:center;
+            border-bottom:1px solid #12334d; padding-bottom:8px; margin-bottom:12px; }
+  .topbar .l { color:#22d3ee; font-size:8.5pt; letter-spacing:3px; }
+  .topbar .r { color:#4b7ea0; font-size:8pt; letter-spacing:1px; }
+
+  h1 { font-size:32pt; font-weight:800; letter-spacing:1.5px; color:#fff; }
+  h1 em { font-style:normal; color:#22d3ee; }
+  .lede { font-size:10.5pt; color:#8fb8cf; }
+
+  h2 { font-size:12pt; color:#22d3ee; letter-spacing:2px; text-transform:uppercase;
+       border-left:3px solid #22d3ee; padding-left:10px; margin:7mm 0 5mm; }
+  h2 .sub { color:#4b7ea0; font-weight:400; letter-spacing:.5px; text-transform:none; }
+  h3.mini { color:#8fd8ea; font-size:9.5pt; letter-spacing:1.5px; margin:5mm 0 3mm; text-transform:uppercase; }
+
+  .foot { margin-top:auto; border-top:1px solid #12334d; padding-top:8px;
+          color:#4b7ea0; font-size:8pt; letter-spacing:1px; display:flex; justify-content:space-between; }
+
+  /* tarjetas genéricas */
+  .cards { display:grid; gap:10px; }
+  .cards.c3 { grid-template-columns:repeat(3,1fr); }
+  .cards.c2 { grid-template-columns:repeat(2,1fr); }
+  .cards.c4 { grid-template-columns:repeat(4,1fr); }
+  .c { border:1px solid #12334d; border-radius:8px; padding:11px 13px; background:#081120; }
+  .c.red { border-top:3px solid #ef4444; }
+  .c.cyan { border-top:3px solid #22d3ee; }
+  .c.amber { border-top:3px solid #f59e0b; }
+  .c.green { border-top:3px solid #22c55e; }
+  .c b { color:#fff; display:block; font-size:9.5pt; margin-bottom:3px; }
+  .c p { font-size:8.5pt; color:#7fa3bb; }
+
+  /* diagrama distancia */
+  .dist { display:flex; align-items:center; gap:14px; border:1px solid #12334d;
+          border-radius:10px; padding:14px 18px; background:#081120; }
+  .planet { border-radius:50%; object-fit:cover; border:2px solid #12334d; }
+  .link { flex:1; position:relative; text-align:center; }
+  .link::before { content:""; position:absolute; top:50%; left:0; right:0; border-top:2px dashed #1d4a63; }
+  .link span { position:relative; background:#081120; padding:0 12px; font-weight:700;
+               color:#fca5a5; font-size:10.5pt; }
+  .dist .cap { max-width:34%; font-size:9pt; color:#7fa3bb; }
+
+  /* telemetría */
+  .tele { width:100%; border-collapse:collapse; }
+  .tele td { border-bottom:1px solid #0e2438; padding:7px 10px; font-size:9pt; vertical-align:top; }
+  .tele td:first-child { color:#22d3ee; font-family:Consolas,monospace; white-space:nowrap; }
+  .tele td:last-child { color:#9fc3d8; }
+
+  /* timeline */
+  .seq { border-left:2px solid #12334d; margin-left:8px; }
+  .ev { position:relative; padding:0 0 15px 24px; }
+  .ev::before { content:""; position:absolute; left:-7px; top:2px; width:12px; height:12px;
+                border-radius:50%; background:#050b14; border:2px solid #22d3ee; }
+  .ev .t0 { font-family:Consolas,monospace; color:#22d3ee; font-size:8.5pt; letter-spacing:1px; }
+  .ev b { color:#fff; font-size:10pt; display:block; margin:2px 0; }
+  .ev p { font-size:8.5pt; color:#7fa3bb; max-width:90%; }
+
+  /* gauges */
+  .gauges { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .g { text-align:center; border:1px solid #12334d; border-radius:8px; padding:10px 6px; background:#081120; }
+  .g b { display:block; font-size:9.5pt; letter-spacing:1px; margin-top:4px; }
+  .g span { font-size:7.5pt; color:#7fa3bb; display:block; }
+
+  /* juego mock */
+  .gmock { border:1px solid #12334d; border-radius:10px; background:#081120; padding:14px; }
+  .gtarget { display:inline-block; border:2px solid #f59e0b; border-radius:10px;
+             padding:10px 16px; font-size:18pt; margin-bottom:10px; }
+  .ggrid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+  .gc { border:2px solid #1d4a63; border-radius:8px; aspect-ratio:1.15; display:flex;
+        align-items:center; justify-content:center; font-size:17pt; background:#0a1524; }
+  .gc.hit { border-color:#22c55e; }
+  .gc.none { border-style:dashed; color:#7fa3bb; font-size:9pt; font-weight:700; }
+  .glabel { font-size:8pt; color:#4b7ea0; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+
+  /* pipeline */
+  .pipe { display:grid; grid-template-columns:1fr 26px 1fr 26px 1fr; gap:6px; align-items:stretch; }
+  .pbox { border:1px solid #12334d; border-radius:8px; background:#081120; padding:12px; text-align:center; }
+  .pbox b { color:#22d3ee; display:block; font-size:9pt; letter-spacing:1px; margin-bottom:5px; }
+  .pbox p { font-size:8pt; color:#7fa3bb; }
+  .parr { display:flex; align-items:center; justify-content:center; color:#22d3ee; font-size:15pt; }
+
+  /* veredicto mock */
+  .vmock { border:1.5px solid #ef4444; border-radius:10px; background:#081120; overflow:hidden; }
+  .vmock .vh { background:rgba(239,68,68,.15); padding:10px 16px; border-bottom:1px solid #ef4444; }
+  .vmock .vh b { color:#fca5a5; font-size:12pt; letter-spacing:1px; }
+  .vmock .vh span { color:#7fa3bb; font-size:8.5pt; margin-left:10px; }
+  .vmock .vb { padding:12px 16px; font-size:9pt; color:#cfe6f5; }
+  .vmock .vb ol { margin-left:18px; }
+  .vmock .vb li { padding:2px 0; }
+
+  /* foto */
+  .photo { width:100%; border-radius:10px; border:1px solid #12334d; display:block; }
+  .photo-cap { font-size:8pt; color:#4b7ea0; letter-spacing:1px; margin-top:5px; }
+
+  .callout { border:1px solid #b45309; background:rgba(180,83,9,.12); border-radius:8px;
+             padding:10px 14px; font-size:9.5pt; color:#fcd9a8; }
+  .callout.cy { border-color:#155e75; background:rgba(34,211,238,.07); color:#a8e6f5; }
+
+  .transcript { border:1px solid #12334d; border-radius:8px; background:#081120; padding:14px 16px; }
+  .transcript .line { font-family:Consolas,monospace; font-size:9pt; margin-bottom:9px; color:#cfe6f5; }
+  .transcript .who { color:#22d3ee; }
+
+  .big { font-size:22pt; font-weight:800; color:#fff; }
+  .big em { font-style:normal; color:#22d3ee; }
+  .stat { text-align:center; border:1px solid #12334d; border-radius:8px; padding:12px; background:#081120; }
+  .stat b { display:block; font-size:20pt; color:#fff; }
+  .stat span { font-size:7.5pt; color:#4b7ea0; text-transform:uppercase; letter-spacing:1px; }
+
+  .breath { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .ph { text-align:center; border:1px solid #12334d; border-radius:10px; padding:14px; background:#081120; }
+  .ph .n { font-size:20pt; font-weight:800; color:#22d3ee; }
+  .ph b { display:block; color:#fff; font-size:9.5pt; margin:4px 0; }
+  .ph p { font-size:8pt; color:#7fa3bb; }
+</style>
+</head>
+<body>
+
+<!-- ================= P1 · PORTADA ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">ASTRO-TRIAGE // DOSSIER DE MISIÓN</span><span class="r">NASA SPACE APPS 2026</span></div>
+  <div style="display:flex;gap:18px;align-items:flex-start;margin-top:8mm">
+    <div style="flex:1">
+      <div style="color:#22d3ee;font-size:8.5pt;letter-spacing:3px;margin-bottom:6mm">DESAFÍO · MONITOREO DE SALUD PARA ASTRONAUTAS</div>
+      <h1>ASTRO<em>-TRIAGE</em></h1>
+      <p class="lede" style="margin-top:6mm;max-width:92%">Copiloto de salud invisible:<br>el astronauta no hace un examen — <b style="color:#fff">juega 60 segundos</b>, y la nave evalúa su salud sola.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10mm">
+        <span style="border:1px solid #155e75;border-radius:20px;padding:5px 14px;font-size:8pt;color:#8fd8ea;letter-spacing:1px">100% A BORDO</span>
+        <span style="border:1px solid #155e75;border-radius:20px;padding:5px 14px;font-size:8pt;color:#8fd8ea;letter-spacing:1px">SIN INTERNET</span>
+        <span style="border:1px solid #155e75;border-radius:20px;padding:5px 14px;font-size:8pt;color:#8fd8ea;letter-spacing:1px">18 PROTOCOLOS NASA</span>
+        <span style="border:1px solid #155e75;border-radius:20px;padding:5px 14px;font-size:8pt;color:#8fd8ea;letter-spacing:1px">CERO FATIGA DE USO</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14mm">
+        <div class="stat"><b>60 s</b><span>por sesión</span></div>
+        <div class="stat"><b>8+</b><span>señales pasivas</span></div>
+        <div class="stat"><b>4</b><span>niveles de alerta</span></div>
+        <div class="stat"><b>0</b><span>bytes fuera</span></div>
+      </div>
+    </div>
+    <img src="../frontend/assets/moon.jpg" style="width:190px;height:auto;border-radius:12px;border:1px solid #12334d" alt="">
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 01 / 15</span></div>
+</div>
+
+<!-- ================= P2 · EL PROBLEMA ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 01 // LA AMENAZA</span><span class="r">CONTEXTO DE MISIÓN</span></div>
+  <h2>El problema <span class="sub">— el astronauta es su propio médico</span></h2>
+
+  <div class="dist">
+    <img class="planet" src="../frontend/assets/earth.jpg" style="width:64px;height:64px" alt="">
+    <div class="link"><span>≈ 20 min de silencio por trayecto</span></div>
+    <img class="planet" src="../frontend/assets/mars.jpg" style="width:64px;height:64px" alt="">
+    <div class="cap">Una urgencia no espera 40 minutos de ida y vuelta. La decisión médica debe existir <b style="color:#fff">dentro de la nave</b>.</div>
+  </div>
+
+  <h3.mini>Los 5 peligros del vuelo humano — Programa de Investigación Humana NASA</h3.mini>
+  <div class="cards c3" style="grid-template-columns:repeat(5,1fr)">
+    <div class="c red"><b>RADIACIÓN</b><p>Daño celular acumulado, riesgo cardiovascular.</p></div>
+    <div class="c red"><b>AISLAMIENTO</b><p>Confinamiento meses → salud conductual.</p></div>
+    <div class="c red"><b>DISTANCIA</b><p>Sin enlace en tiempo real → autonomía total.</p></div>
+    <div class="c red"><b>GRAVEDAD</b><p>Pérdida ósea, equilibrio, reflejos.</p></div>
+    <div class="c red"><b>CABINA</b><p>CO₂, ruido, monotonía → fatiga y sueño.</p></div>
+  </div>
+
+  <h3.mini>La paradoja del examen</h3.mini>
+  <div class="cards c3">
+    <div class="c amber"><b>TESTS TEDIOSOS</b><p>El PVT y los formularios se sienten como trámite — se posponen.</p></div>
+    <div class="c amber"><b>AUTO-DIAGNÓSTICO</b><p>Evaluar tu propia fatiga es difícil: la fatiga nubla el juicio.</p></div>
+    <div class="c amber"><b>LO QUE NO SE MIDE</b><p>Los problemas se descubren cuando ya son grandes — en el espacio, tarde es peligroso.</p></div>
+  </div>
+
+  <div class="callout" style="margin-top:8mm">CONCLUSIÓN — el desafío no es solo medir la salud: es lograr que la tripulación se deje medir, todos los días, sin médico y sin fricción.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 02 / 15</span></div>
+</div>
+
+<!-- ================= P3 · LA IDEA ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 02 // EL INSIGHT</span><span class="r">POR QUÉ UN JUEGO</span></div>
+  <h2>La idea <span class="sub">— esconder el examen dentro del juego</span></h2>
+
+  <div class="big" style="margin:6mm 0 8mm">«El examen que se pospone<br><em>no protege a nadie.»</em></div>
+
+  <div class="pipe">
+    <div class="pbox"><b>PROBLEMA REAL</b><p>Los tests médicos diarios compiten con la fatiga, el aburrimiento y el orgullo del astronauta.</p></div>
+    <div class="parr">→</div>
+    <div class="pbox"><b>NUESTRO GIRO</b><p>Si el chequeo ES un juego de cartas de 60 s, la tripulación lo hace voluntariamente — cada día.</p></div>
+    <div class="parr">→</div>
+    <div class="pbox"><b>RESULTADO</b><p>Datos de salud capturados a diario, sin disciplina requerida. La constancia ES la cobertura.</p></div>
+  </div>
+
+  <h3.mini>Por qué funciona</h3.mini>
+  <div class="cards c2">
+    <div class="c cyan"><b>SIN FRICCIÓN</b><p>Un botón: JUGAR. Sin formularios, sin consentimientos, sin “hoy me toca el examen”.</p></div>
+    <div class="c cyan"><b>SIN ESTIGMA</b><p>Nadie siente que lo examinan — es un descanso, no una evaluación psicológica.</p></div>
+    <div class="c cyan"><b>DATOS HONESTOS</b><p>Al no sentirse evaluado, el astronauta no “actúa” para la cámara: las señales son reales.</p></div>
+    <div class="c cyan"><b>ADHERENCIA DIARIA</b><p>El juego da puntos y rachas — el hábito se mantiene solo durante la misión.</p></div>
+  </div>
+
+  <div class="callout cy" style="margin-top:8mm">PRINCIPIO DE DISEÑO — la métrica más importante de un sistema de monitoreo es si la gente lo usa. Por eso la UI se diseñó primero como juego y después como instrumento médico.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 03 / 15</span></div>
+</div>
+
+<!-- ================= P4 · LA SOLUCIÓN ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 03 // LA SOLUCIÓN</span><span class="r">ARQUITECTURA DE LA EXPERIENCIA</span></div>
+  <h2>Cómo funciona <span class="sub">— tres piezas, un flujo</span></h2>
+
+  <div class="pipe" style="margin-top:6mm">
+    <div class="pbox" style="border-color:#1d4a63">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.6"><rect x="3" y="5" width="8" height="14" rx="2"/><rect x="13" y="5" width="8" height="14" rx="2"/><circle cx="7" cy="9" r="1.4" fill="#22d3ee"/><circle cx="17" cy="9" r="1.4" fill="#22d3ee"/></svg>
+      <b>1 · JUEGO</b>
+      <p>Cartas de reacción, 60 s.<br>Mide: latencia, lapsos, errores, consistencia.</p>
+    </div>
+    <div class="parr">→</div>
+    <div class="pbox" style="border-color:#1d4a63">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.6"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+      <b>2 · SENSORES</b>
+      <p>Cámara pasiva + 3 preguntas.<br>Mide: ojos, rostro, pulso, ánimo.</p>
+    </div>
+    <div class="parr">→</div>
+    <div class="pbox" style="border-color:#1d4a63">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 12l2 2 4-4" stroke-width="2"/></svg>
+      <b>3 · TRIAJE</b>
+      <p>Motor local + 18 protocolos.<br>Entrega: color + acciones.</p>
+    </div>
+  </div>
+
+  <h3.mini>El flujo completo — automático de punta a punta</h3.mini>
+  <div class="seq">
+    <div class="ev"><span class="t0">FASE 1</span><b>Juego visible</b><p>El astronauta solo ve cartas, puntos y racha — una sesión normal de descanso.</p></div>
+    <div class="ev"><span class="t0">FASE 2</span><b>Captura invisible</b><p>Cámara y juego graban biometría en segundo plano — nada interrumpe la partida.</p></div>
+    <div class="ev"><span class="t0">FASE 3</span><b>Check-in de 3 toques</b><p>Ánimo, sueño y equipo — preguntas directas de un toque cada una.</p></div>
+    <div class="ev"><span class="t0">FASE 4</span><b>Veredicto solo</b><p>El motor cruza señales, consulta protocolos y presenta color + plan — sin que nadie pulse “generar”.</p></div>
+  </div>
+
+  <div class="callout cy" style="margin-top:6mm">LO QUE EL USUARIO VE: un juego y un resultado.<br>LO QUE EL SISTEMA HACE: un examen médico funcional completo.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 04 / 15</span></div>
+</div>
+
+<!-- ================= P5 · SECUENCIA DE MISIÓN ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 04 // EXPERIENCIA</span><span class="r">LO QUE VIVE EL ASTRONAUTA</span></div>
+  <h2>Secuencia de misión <span class="sub">— una sesión real, segundo a segundo</span></h2>
+
+  <div class="seq" style="margin-top:6mm">
+    <div class="ev"><span class="t0">T+00:00</span><b>Abre la consola</b><p>Los sensores se prepararon solos al cargar. El panel muestra solo: SEÑAL, marcador, y un botón — JUGAR.</p></div>
+    <div class="ev"><span class="t0">T+00:03</span><b>Opcional: un toque</b><p>Si le duele la cabeza, está mareado o con náusea — un toque lo registra. Si no, sigue.</p></div>
+    <div class="ev"><span class="t0">T+00:05</span><b>Pulsa JUGAR — arranca al instante</b><p>Aparecen las cartas. Regla: toca la carta igual a la SEÑAL, o ✕ NINGUNA si no hay.</p></div>
+    <div class="ev"><span class="t0">T+00:05 → T+01:05</span><b>La partida corre</b><p>Puntos, racha y errores visibles. En segundo plano: parpadeos, pulso, bostezos, rostro, mirada, latencias.</p></div>
+    <div class="ev"><span class="t0">T+01:05</span><b>Check-in automático</b><p>Tres preguntas directas: ¿cómo te sientes? ¿cómo dormiste? ¿cómo va el ánimo con el equipo?</p></div>
+    <div class="ev"><span class="t0">T+01:10</span><b>Análisis</b><p>Las señales se comparan con su línea base personal y se clasifican por severidad.</p></div>
+    <div class="ev"><span class="t0">T+01:12</span><b>Veredicto en pantalla</b><p>Color + hallazgos en lenguaje simple + 3 acciones con protocolos citados. Si hace falta: respiración 4-7-8.</p></div>
+  </div>
+
+  <div class="callout" style="margin-top:6mm">TOTAL: ~70 segundos del día del astronauta. Cobertura: las 24 horas de salud que nadie más está mirando.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 05 / 15</span></div>
+</div>
+
+<!-- ================= P6 · EL JUEGO ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 05 // EL JUEGO</span><span class="r">PVT DISFRAZADO DE CARTAS</span></div>
+  <h2>El reto de reacción <span class="sub">— por fuera juego, por dentro PVT</span></h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-top:4mm">
+    <div class="gmock">
+      <div class="glabel">Señal</div>
+      <div class="gtarget" style="color:#f59e0b">★</div>
+      <div class="glabel">Tu turno — toca la carta igual, o ✕ ninguna</div>
+      <div class="ggrid">
+        <div class="gc" style="color:#38bdf8">◆</div><div class="gc" style="color:#a78bfa">●</div><div class="gc" style="color:#e2e8f0">☾</div>
+        <div class="gc hit" style="color:#f59e0b">★</div><div class="gc none">✕ NINGUNA</div>
+      </div>
+    </div>
+    <div>
+      <h3.mini style="margin-top:0">Qué mide en silencio</h3.mini>
+      <table class="tele">
+        <tr><td>LATENCIA</td><td>ms por acierto → velocidad de procesamiento</td></tr>
+        <tr><td>LAPSOS</td><td>respuestas &gt;500 ms → micro-distracciones</td></tr>
+        <tr><td>ERRORES</td><td>tasa de fallo → atención degradada</td></tr>
+        <tr><td>VS BASAL</td><td>% sobre tu propia media → deterioro personal</td></tr>
+      </table>
+      <p style="font-size:8.5pt;color:#7fa3bb;margin-top:8px">Es el equivalente funcional al <b style="color:#cfe6f5">Psychomotor Vigilance Task</b> que la NASA usa en la ISS — sin que se sienta un examen.</p>
+    </div>
+  </div>
+
+  <h3.mini>Gamificación real — lo que engancha</h3.mini>
+  <div class="cards c4">
+    <div class="c cyan"><b>PUNTOS</b><p>Cada acierto suma — feedback inmediato.</p></div>
+    <div class="c cyan"><b>RACHA</b><p>Multiplicador por aciertos seguidos.</p></div>
+    <div class="c cyan"><b>SÍMBOLOS</b><p>Temática espacial — se siente de la nave.</p></div>
+    <div class="c cyan"><b>60 SEGUNDOS</b><p>Suficiente para medir, corto para no cansar.</p></div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 06 / 15</span></div>
+</div>
+
+<!-- ================= P7 · TELEMETRÍA ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 06 // TELEMETRÍA</span><span class="r">LO QUE LEE LA CÁMARA</span></div>
+  <h2>Canal de sensores <span class="sub">— visión pasiva, sin hardware extra</span></h2>
+
+  <div style="display:grid;grid-template-columns:1fr 200px;gap:16px;align-items:start">
+    <table class="tele">
+      <tr><td>CAM · PARPADEO</td><td>frecuencia por minuto → alerta y fatiga</td></tr>
+      <tr><td>CAM · DURACIÓN</td><td>parpadeos largos → párpados pesados</td></tr>
+      <tr><td>CAM · PERCLOS</td><td>% de ojo medio cerrado → somnolencia real</td></tr>
+      <tr><td>CAM · BOSTEZOS</td><td>conteo por sesión → fatiga diurna</td></tr>
+      <tr><td>CAM · ASIMETRÍA</td><td>lados de la cara distintos → <b style="color:#fca5a5">alerta neurológica</b></td></tr>
+      <tr><td>CAM · OREJA-EAR</td><td>asimetría de apertura ocular → segundo canal neuro</td></tr>
+      <tr><td>CAM · rPPG</td><td>pulso por cambios de color de la piel</td></tr>
+      <tr><td>CAM · HRV</td><td>variabilidad cardíaca → estrés / calma</td></tr>
+      <tr><td>CAM · MIRADA</td><td>% fuera de pantalla → desconexión</td></tr>
+      <tr><td>CAM · TENSIÓN</td><td>ceño fruncido sostenido → estrés o dolor</td></tr>
+      <tr><td>CAM · ESCLERA</td><td>enrojecimiento → fatiga visual</td></tr>
+      <tr><td>CAM · BALANCEO</td><td>micro-movimientos de cabeza → equilibrio</td></tr>
+    </table>
+    <div>
+      <img class="photo" src="../frontend/assets/eros.jpg" alt="">
+      <div class="photo-cap">FIG · ANÁLISIS LOCAL — el video nunca sale del navegador ni de la nave.</div>
+      <div class="c cyan" style="margin-top:10px"><b>SIN WEARABLES</b><p>Solo la cámara del equipo — nada que cargar, nada que olvidar ponerse.</p></div>
+      <div class="c green" style="margin-top:8px"><b>MODO DEGRADADO</b><p>Sin cámara: el juego y las preguntas siguen midiendo. Sin nada: valores conservadores.</p></div>
+    </div>
+  </div>
+
+  <div class="callout cy" style="margin-top:6mm">12 señales biomédicas capturadas mientras el astronauta cree que solo está jugando.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 07 / 15</span></div>
+</div>
+
+<!-- ================= P8 · CHECK-IN ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 07 // CHECK-IN</span><span class="r">LA VOZ DEL DÍA</span></div>
+  <h2>Tres preguntas <span class="sub">— salud mental en tres toques</span></h2>
+
+  <div class="cards c3" style="margin-top:6mm">
+    <div class="c cyan">
+      <b>¿CÓMO TE SIENTES HOY?</b>
+      <p>Con energía · Cansado · Muy bajo de ánimo</p>
+      <p style="margin-top:6px;color:#4b7ea0">→ energía y moral general</p>
+    </div>
+    <div class="c cyan">
+      <b>¿CÓMO DORMISTE ANOCHE?</b>
+      <p>Bien, completo · Me desperté · Casi no dormí</p>
+      <p style="margin-top:6px;color:#4b7ea0">→ deuda de sueño reportada</p>
+    </div>
+    <div class="c cyan">
+      <b>¿CÓMO VA TU ÁNIMO CON EL EQUIPO?</b>
+      <p>Bien, conectado · Algo distante · Aislado</p>
+      <p style="margin-top:6px;color:#4b7ea0">→ aislamiento y burnout</p>
+    </div>
+  </div>
+
+  <h3.mini>Por qué solo tres</h3.mini>
+  <div class="cards c3">
+    <div class="c"><b>UN TOQUE CADA UNA</b><p>Cero escritura, cero fricción — contestadas en 5 segundos.</p></div>
+    <div class="c"><b>LENGUAJE DIRECTO</b><p>Sin jerga clínica — preguntas que cualquier tripulante entiende.</p></div>
+    <div class="c"><b>CRUZA CON SENSORES</b><p>“Me siento bien” + ojos que dicen lo contrario → el sistema lo nota.</p></div>
+  </div>
+
+  <h3.mini>Síntomas físicos — antes de jugar</h3.mini>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <span style="border:1px solid #12334d;background:#081120;border-radius:20px;padding:7px 16px;font-size:9pt;color:#cfe6f5">Dolor de cabeza</span>
+    <span style="border:1px solid #12334d;background:#081120;border-radius:20px;padding:7px 16px;font-size:9pt;color:#cfe6f5">Mareo</span>
+    <span style="border:1px solid #12334d;background:#081120;border-radius:20px;padding:7px 16px;font-size:9pt;color:#cfe6f5">Náusea</span>
+    <span style="border:1px solid #155e75;background:rgba(34,211,238,.07);border-radius:20px;padding:7px 16px;font-size:9pt;color:#8fd8ea">Nada — me siento bien</span>
+  </div>
+  <p style="font-size:8.5pt;color:#4b7ea0;margin-top:8px">Un toque, opcional. Los síntomas físicos reportados pesan directo en el triaje — especialmente cefalea + señal neurológica.</p>
+
+  <div class="callout cy" style="margin-top:8mm">La salud conductual es un peligro oficial de la NASA — el aislamiento se detecta aquí, antes de que sea un problema de misión.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 08 / 15</span></div>
+</div>
+
+<!-- ================= P9 · MOTOR ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 08 // MOTOR DE DECISIÓN</span><span class="r">CÓMO PIENSA</span></div>
+  <h2>El pipeline de triaje <span class="sub">— de señal a decisión</span></h2>
+
+  <div class="seq" style="margin-top:5mm">
+    <div class="ev"><span class="t0">PASO 1</span><b>Normalizar contra ti</b><p>Cada métrica se compara con tu línea base individual — no contra un promedio genérico. Estándar NASA de medicina operacional.</p></div>
+    <div class="ev"><span class="t0">PASO 2</span><b>Clasificar hallazgos</b><p>Cada señal anómala → hallazgo con severidad: aviso · precaución · alerta · crítico, y dominio: ojos, reflejos, corazón, neuro, mente…</p></div>
+    <div class="ev"><span class="t0">PASO 3</span><b>Detectar patrones</b><p>Las señales se cruzan: reflejos lentos + ánimo bajo + mal sueño = posible fatiga mental severa, no solo “un mal día”.</p></div>
+    <div class="ev"><span class="t0">PASO 4</span><b>Consultar protocolos</b><p>Búsqueda semántica local sobre 18 documentos NASA-STD-3001 / IMG / BHP — la acción citada es la correcta, no inventada.</p></div>
+    <div class="ev"><span class="t0">PASO 5</span><b>Escribir el veredicto</b><p>Color + hallazgos en palabras simples + máx. 3 acciones numeradas. Siempre declara: soporte de decisión, no diagnóstico.</p></div>
+  </div>
+
+  <h3.mini>Modo degradado — jamás en silencio</h3.mini>
+  <div class="cards c3">
+    <div class="c green"><b>TODO OK</b><p>Cámara + juego + check-in → triaje completo.</p></div>
+    <div class="c amber"><b>SIN CÁMARA</b><p>Juego + check-in + síntomas → triaje con lo que hay.</p></div>
+    <div class="c red"><b>MÍNIMO</b><p>Solo lo reportado → respuesta conservadora — nunca “sin datos”.</p></div>
+  </div>
+
+  <div class="callout cy" style="margin-top:7mm">El motor es determinista primero (siempre responde) y opcionalmente usa un LLM local para narrar — en el espacio, la respuesta no puede depender de una API.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 09 / 15</span></div>
+</div>
+
+<!-- ================= P10 · EL VEREDICTO ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 09 // EL VEREDICTO</span><span class="r">LO QUE RECIBE EL ASTRONAUTA</span></div>
+  <h2>Lectura de instrumento <span class="sub">— un color, tres pasos</span></h2>
+
+  <div class="gauges" style="margin-top:4mm">
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 18 9.6" fill="none" stroke="#22c55e" stroke-width="5"/><circle cx="14" cy="20" r="3.4" fill="#22c55e"/></svg><b style="color:#22c55e">NOMINAL</b><span>sigue el plan</span></div>
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 30 6.4" fill="none" stroke="#a3e635" stroke-width="5"/><circle cx="30" cy="9" r="3.4" fill="#a3e635"/></svg><b style="color:#a3e635">VERDE</b><span>vigilar</span></div>
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 44 9" fill="none" stroke="#f59e0b" stroke-width="5"/><circle cx="44" cy="10" r="3.4" fill="#f59e0b"/></svg><b style="color:#f59e0b">ÁMBAR</b><span>actuar hoy</span></div>
+    <div class="g"><svg viewBox="0 0 60 34" width="54"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#ef4444" stroke-width="5"/><circle cx="52" cy="24" r="3.4" fill="#ef4444"/></svg><b style="color:#ef4444">ROJO</b><span>emergencia</span></div>
+  </div>
+
+  <h3.mini>Ejemplo real — escenario ROJO del modo jurado</h3.mini>
+  <div class="vmock">
+    <div class="vh"><b>ROJO — EMERGENCIA A BORDO</b><span>triaje autónomo · RAG local</span></div>
+    <div class="vb">
+      <p style="color:#7fa3bb;margin-bottom:6px">Hallazgos: asimetría facial nueva · reflejos lentos + ánimo bajo (fatiga mental severa) · cefalea reportada</p>
+      <ol>
+        <li>DETÉN TODO. Examen FAST con otro tripulante y canal médico prioritario ahora.</li>
+        <li>Protege tu próxima ventana de sueño: 8 h bloqueadas, módulo oscuro.</li>
+        <li>Señal de falta de sueño: bloquea descanso de 8 h y evita cafeína previa.</li>
+      </ol>
+      <p style="color:#fca5a5;margin-top:8px">⚠ Avisa a otro tripulante y abre canal médico ahora.</p>
+      <p style="color:#4b7ea0;margin-top:4px">— IA local · no es diagnóstico médico · fuentes: NASA-STD-3001-4.2.1 / IMG-CHECKLIST-3.1</p>
+    </div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 10 / 15</span></div>
+</div>
+
+<!-- ================= P11 · CONOCIMIENTO ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 10 // CONOCIMIENTO</span><span class="r">18 PROTOCOLOS A BORDO</span></div>
+  <h2>La biblioteca médica <span class="sub">— evidencia, no intuición</span></h2>
+
+  <h3.mini style="margin-top:2mm">NASA-STD-3001 — estándar de sistemas humanos de vuelo</h3.mini>
+  <table class="tele">
+    <tr><td>4.2.1</td><td>Fatiga circadiana y deuda de sueño</td></tr>
+    <tr><td>4.2.4</td><td>Ralentización psicomotriz y vigilancia (estándar PVT)</td></tr>
+    <tr><td>4.3.2</td><td>Deshidratación y desequilibrio de electrolitos</td></tr>
+    <tr><td>4.4.3</td><td>Contramedidas de ejercicio y carga ARED</td></tr>
+    <tr><td>4.5.1</td><td>Intolerancia ortostática e inestabilidad vestibular</td></tr>
+    <tr><td>4.6.1</td><td>Fatiga visual y trabajo en pantalla</td></tr>
+    <tr><td>5.2.1</td><td>Higiene de sueño y ciclo vigilia-sueño</td></tr>
+    <tr><td>6.1.2</td><td>Monitoreo de radiación espacial</td></tr>
+    <tr><td>7.1.1</td><td>Exposición a dióxido de carbono (CO₂)</td></tr>
+    <tr><td>8.3.1</td><td>Evaluación cognitiva pasiva (contexto del sistema)</td></tr>
+  </table>
+
+  <h3.mini>Checklists IMG — procedimientos de vuelo</h3.mini>
+  <table class="tele">
+    <tr><td>IMG-3.1</td><td>Evaluación de evento neurológico agudo</td></tr>
+    <tr><td>IMG-5.4</td><td>Cefalea en vuelo espacial</td></tr>
+    <tr><td>IMG-2.3</td><td>Taquicardia y síntomas cardiovasculares</td></tr>
+    <tr><td>IMG-7.2</td><td>Malestar psicológico y carga de trabajo</td></tr>
+    <tr><td>IMG-8.1</td><td>Burnout y sobrecarga psicosocial de tripulación</td></tr>
+    <tr><td>IMG-9.1</td><td>Triaje rápido: convergencia de señales</td></tr>
+  </table>
+
+  <h3.mini>BHP — salud conductual</h3.mini>
+  <table class="tele">
+    <tr><td>BHP-2.1</td><td>Soporte psicológico en aislamiento</td></tr>
+    <tr><td>BHP-RES-4.7</td><td>Regulación autonómica: respiración 4-7-8 y grounding</td></tr>
+  </table>
+
+  <div class="callout cy" style="margin-top:5mm">Cada acción del veredicto cita su fuente — el astronauta puede verificar el porqué, como en un checklist de vuelo.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 11 / 15</span></div>
+</div>
+
+<!-- ================= P12 · TENDENCIA + CALMA ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 11 // TENDENCIA + CALMA</span><span class="r">MÁS ALLÁ DEL DÍA</span></div>
+  <h2>Tu línea base <span class="sub">— te compara contigo, no con nadie más</span></h2>
+
+  <p style="font-size:9.5pt;color:#7fa3bb;max-width:88%">La NASA evalúa astronautas contra su propio historial — un pulso de 90 puede ser normal para uno y alarma para otro. El sistema guarda tu tendencia de 14 días:</p>
+
+  <div style="display:flex;align-items:flex-end;gap:5px;height:80px;border:1px solid #12334d;border-radius:10px;padding:12px;background:#081120;margin-top:8px">
+    <div style="flex:1;background:#22c55e;height:75%"></div><div style="flex:1;background:#22c55e;height:80%"></div>
+    <div style="flex:1;background:#22c55e;height:78%"></div><div style="flex:1;background:#f59e0b;height:55%"></div>
+    <div style="flex:1;background:#22c55e;height:72%"></div><div style="flex:1;background:#22c55e;height:82%"></div>
+    <div style="flex:1;background:#22c55e;height:80%"></div><div style="flex:1;background:#f59e0b;height:50%"></div>
+    <div style="flex:1;background:#22c55e;height:70%"></div><div style="flex:1;background:#22c55e;height:78%"></div>
+    <div style="flex:1;background:#22c55e;height:83%"></div><div style="flex:1;background:#22c55e;height:85%"></div>
+    <div style="flex:1;background:#22c55e;height:80%"></div><div style="flex:1;background:#22c55e;height:88%"></div>
+  </div>
+  <div class="photo-cap">FIG · 14 sesiones — verde: dentro de tu rango · ámbar: contramedidas activadas ese día.</div>
+
+  <h2 style="margin-top:9mm">Calma a pedido <span class="sub">— micro-intervención cuando el estrés sube</span></h2>
+  <div class="breath">
+    <div class="ph"><div class="n">4</div><b>INHALA</b><p>cuenta hasta 4 por la nariz</p></div>
+    <div class="ph"><div class="n">7</div><b>SOSTÉN</b><p>7 segundos de retención</p></div>
+    <div class="ph"><div class="n">8</div><b>EXHALA</b><p>vacía durante 8 segundos</p></div>
+  </div>
+  <p style="font-size:8.5pt;color:#4b7ea0;margin-top:8px">Protocolo BHP-RES-4.7 — regulación autonómica validada. Se ofrece automáticamente cuando el veredicto detecta estrés, ansiedad o alerta ÁMBAR/ROJO.</p>
+
+  <div class="callout cy" style="margin-top:8mm">El sistema no solo detecta — también actúa: contramedidas operativas, sueño protegido, respiración guiada, escalamiento médico.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 12 / 15</span></div>
+</div>
+
+<!-- ================= P13 · AUTONOMÍA ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 12 // AUTONOMÍA</span><span class="r">DISEÑADO PARA MARTE</span></div>
+  <h2>Cien por cien a bordo <span class="sub">— arquitectura de confianza</span></h2>
+
+  <div class="cards c2" style="margin-top:4mm">
+    <div class="c cyan"><b>SIN ENLACE = SIN PROBLEMA</b><p>Todo el análisis corre local en la nave: visión, triaje, protocolos, narración. Internet nunca está en el camino crítico.</p></div>
+    <div class="c cyan"><b>PRIVACIDAD MÉDICA</b><p>El video se procesa en el navegador y muere ahí. La salud mental del astronauta no se transmite ni se almacena fuera.</p></div>
+    <div class="c cyan"><b>DETERMINISTA PRIMERO</b><p>El veredicto nace de reglas y protocolos — el LLM local solo lo narra mejor. Sin LLM, la respuesta es idéntica en contenido.</p></div>
+    <div class="c cyan"><b>NUNCA EN SILENCIO</b><p>Cámara caída → decide con juego + check-in. Todo caído → valores conservadores. La tripulación siempre recibe respuesta.</p></div>
+    <div class="c cyan"><b>STACK SOBREVIVIENTE</b><p>FastAPI + HTML/JS estándar — corre en cualquier computadora de a bordo, sin instalación compleja.</p></div>
+    <div class="c cyan"><b>HONESTIDAD DE DISEÑO</b><p>Declara “soporte de decisión — no diagnóstico médico”: la misma filosofía que un checklist de vuelo.</p></div>
+  </div>
+
+  <img class="photo" src="../frontend/assets/earth.jpg" style="margin-top:10px;max-height:70px;object-fit:cover;object-position:center 60%" alt="">
+  <div class="photo-cap">FIG · BLUE MARBLE (NASA) — la Tierra sirve de fondo en la consola: el hogar al que esta herramienta ayuda a volver sano.</div>
+
+  <div class="callout" style="margin-top:8mm">REGLA DE MISIÓN — en el espacio profundo, el software de salud debe funcionar como el oxígeno: siempre, solo, sin preguntar.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 13 / 15</span></div>
+</div>
+
+<!-- ================= P14 · CUMPLIMIENTO ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 13 // CUMPLIMIENTO</span><span class="r">REQUISITO POR REQUISITO</span></div>
+  <h2>Contra el desafío <span class="sub">— checklist oficial NASA Space Apps</span></h2>
+
+  <table class="tele" style="margin-top:4mm">
+    <tr><td>HERRAMIENTA VISUAL</td><td>Veredicto por color + hallazgos en lenguaje simple + plan numerado — lectura de un vistazo.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>ENTRADA: CÁMARA / CLICS / TEXTO</td><td>Cámara pasiva (12 señales) + juego de clics + check-in de 3 toques. Las tres usadas.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>INDICADORES DE SALUD</td><td>Pulso, sueño, reflejos, fatiga visual, ánimo, síntomas — todos los sugeridos por el desafío, más neuro y estrés.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>ORIENTACIÓN DE TRATAMIENTO</td><td>Acciones concretas citando 18 protocolos NASA-STD-3001 / IMG / BHP.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>GAMIFICACIÓN</td><td>El chequeo ES el juego — puntos, racha, 60 segundos. La sugerencia llevada al extremo.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>GRÁFICOS EN EL TIEMPO</td><td>Tendencia de 14 días contra línea base individual (estándar NASA).</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>COLOR DE UN VISTAZO</td><td>4 niveles operativos: NOMINAL / VERDE / ÁMBAR / ROJO.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>INSTRUCCIONES SIMPLES</td><td>Una regla de juego en 11 palabras. Preguntas de un toque. Veredicto en lenguaje de cabina.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>ACCIÓN PREVENTIVA</td><td>Contramedidas antes de que escale + respiración 4-7-8 guiada.</td><td style="color:#22c55e">✓</td></tr>
+    <tr><td>ENTORNOS</td><td>Nave, estación, rover, base — corre en cualquier equipo con cámara. Sin wearables.</td><td style="color:#22c55e">✓</td></tr>
+  </table>
+
+  <div class="callout cy" style="margin-top:8mm">DIFERENCIADOR CLAVE — otros sistemas piden al astronauta que se examine; el nuestro lo hace mientras el astronauta se divierte.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // DOSSIER</span><span>PÁG 14 / 15</span></div>
+</div>
+
+<!-- ================= P15 · PITCH ================= -->
+<div class="page">
+  <div class="topbar"><span class="l">SECCIÓN 14 // TRANSMISIÓN AL JURADO</span><span class="r">DEMO + PITCH</span></div>
+  <h2>La demo <span class="sub">— 60 segundos en vivo</span></h2>
+
+  <div class="seq">
+    <div class="ev"><span class="t0">PASO 1</span><b>Abrir la app</b><p>La consola aparece sobre la escena espacial — la cámara y sensores ya están listos.</p></div>
+    <div class="ev"><span class="t0">PASO 2</span><b>Pulsar JUGAR</b><p>Partida de cartas instantánea — un jurado puede jugarla él mismo.</p></div>
+    <div class="ev"><span class="t0">PASO 3</span><b>Dejar que ocurra</b><p>Señales → check-in → veredicto con color, hallazgos, acciones y fuentes — todo automático.</p></div>
+    <div class="ev"><span class="t0">PASO 4</span><b>Atajo de jurado</b><p>Alt+Shift+1/2/3 proyecta NOMINAL / ÁMBAR / ROJO con datos realistas — sin esperar la partida.</p></div>
+  </div>
+
+  <h2>Pitch <span class="sub">— guion de 90 segundos</span></h2>
+  <div class="transcript">
+    <div class="line"><span class="who">[00:00]</span> Houston no puede contestar en veinte minutos. La nave sí.</div>
+    <div class="line"><span class="who">[00:15]</span> Astro-Triage convierte el chequeo médico diario en una partida de cartas de un minuto.</div>
+    <div class="line"><span class="who">[00:35]</span> Mientras se juega, la cámara lee parpadeos, bostezos, tensión, pulso y mirada; el juego lee reflejos y atención.</div>
+    <div class="line"><span class="who">[00:55]</span> Al terminar — sin un solo botón — cruzamos esas señales con dieciocho protocolos reales de la NASA y respondemos en color y tres pasos.</div>
+    <div class="line"><span class="who">[01:15]</span> Cien por cien a bordo. Cero bytes transmitidos. La autonomía médica no es un lujo: es la misión.</div>
+  </div>
+
+  <div class="big" style="margin-top:10mm;text-align:center">«El astronauta no hace un examen.<br><em>Juega un minuto — la nave aprende cómo está.»</em></div>
+
+  <div class="foot"><span>ASTRO-TRIAGE // FIN DE DOSSIER</span><span>PÁG 15 / 15</span></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "NASA-STD-3001-4.2.1",
+    "title": "Fatiga circadiana y deuda de sueño",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §4.2",
+    "tags": ["fatiga", "sueño", "circadiano", "cognicion", "luz"],
+    "text": "Ante signos de fatiga circadiana (lentitud psicomotriz >10%, parpadeo lento, micro-siestas): (1) Programar siesta controlada de 20-26 min antes de la ventana crítica. (2) Exposición a luz enriquecida en azul 450-480 nm durante 30 min en la fase de vigilia; evitarla 2 h antes del sueño planificado. (3) Reprogramar tareas de alta criticidad fuera del nadir circadiano (02:00-06:00 hora del cuerpo). (4) Cafeína 100-200 mg solo si quedan >8 h hasta el periodo de sueño. (5) Registrar evento en el log médico y reevaluar en 4 h. Si la degradación supera el 20% respecto a la línea base durante dos evaluaciones consecutivas, notificar al Flight Surgeon en el siguiente pase de comunicaciones."
+  },
+  {
+    "id": "NASA-STD-3001-4.3.2",
+    "title": "Deshidratación y desequilibrio de electrolitos",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §4.3",
+    "tags": ["deshidratacion", "electrolitos", "frecuencia cardiaca", "mareo", "agua"],
+    "text": "La reducción del volumen plasmático en microgravedad enmascara la deshidratación: la sed no es indicador confiable. Ante frecuencia cardiaca en reposo >10% sobre línea base junto a fatiga o cefalea: (1) Ingerir 400-500 ml de agua con electrolitos (Na+ 20-30 mEq/L) en los próximos 30 min. (2) Repetir medición de frecuencia cardiaca a los 45 min. (3) Aumentar la ingesta diaria programada en 500 ml durante las siguientes 24 h. (4) Revisar registro de sudoración por ejercicio en ARED/CEVIS de las últimas 48 h. Si persiste taquicardia o aparece hipotensión ortostática, aplicar protocolo de reposición con fluido isotónico y consultar al Flight Surgeon."
+  },
+  {
+    "id": "NASA-STD-3001-4.5.1",
+    "title": "Intolerancia ortostática e inestabilidad vestibular",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §4.5",
+    "tags": ["vestibular", "mareo", "postura", "equilibrio", "ortostatico", "sincope"],
+    "text": "El desacondicionamiento vestibular produce inestabilidad postural y sensación de mareo, especialmente en adaptación inicial (Space Adaptation Syndrome) y tras ejercicio intenso. Ante balanceo postural elevado o queja de mareo/vertigo: (1) Suspender operaciones que requieran equilibrio fino o transiciones rápidas de orientación. (2) Realizar movimientos de cabeza lentos y controlados; evitar cambios bruscos de orientación visual. (3) Fijación visual en referencia estable durante tareas. (4) Hidratación con electrolitos y comida ligera si hay náusea asociada. (5) Si hay cefalea intensa, vómito o alteración del nivel de conciencia: evaluación médica urgente, posible evento neurológico — activar protocolo de telemetría médica prioritaria."
+  },
+  {
+    "id": "NASA-STD-3001-4.2.4",
+    "title": "Ralentización psicomotriz y vigilancia (estándar PVT)",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §4.2.4",
+    "tags": ["psicomotriz", "latencia", "vigilancia", "cognicion", "pvt", "radiacion"],
+    "text": "El Psychomotor Vigilance Task define lapsus como respuesta >500 ms y degradación significativa como incremento sostenido >10-15% en latencia media respecto a línea basal individual. Interpretación operativa: (1) 10-15% = fatiga moderada, ajustar carga de trabajo ese turno. (2) >15-20% = fatiga significativa o exposición ambiental (revisar CO2 del módulo); el tripulante no debe ejecutar tareas críticas de seguridad (EVA, acoplamiento, robótica) sin supervisión. (3) >25% o combinado con errores: restricción de tareas críticas, sueño de recuperación de 8 h mínimo y reevaluación. (4) Registrar tendencia: deterioro progresivo en 3+ evaluaciones puede indicar deuda de sueño crónica, exposición a radiación o causas médicas — escalar a Flight Surgeon."
+  },
+  {
+    "id": "NASA-STD-3001-7.1.1",
+    "title": "Exposición a dióxido de carbono (CO2)",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §7.1",
+    "tags": ["co2", "cefalea", "dolor de cabeza", "cognicion", "ambiente", "ventilacion"],
+    "text": "CO2 ambiental elevado (>0.5% sostenido; en ISS los límites operativos son ~2-5 mmHg ppCO2) produce cefalea, lentitud cognitiva e irritabilidad antes de síntomas graves. Ante combinación de cefalea + deterioro cognitivo medible: (1) Verificar lectura del sensor de CO2 del módulo y ventilación local (los bolsillos de CO2 se forman en zonas sin flujo de aire). (2) Reubicar al tripulante a zona con mejor ventilación / activar ventiladores de circulación. (3) Revisar estado de los lechos de LiOH/CDRA del sistema de soporte vital. (4) No automedicar cefalea recurrente sin descartar CO2. (5) Si ppCO2 >7 mmHg o síntomas severos (vómito, confusión): procedimiento de contingencia ambiental y notificación inmediata a Control de Misión."
+  },
+  {
+    "id": "IMG-CHECKLIST-3.1",
+    "title": "Evaluación de evento neurológico agudo",
+    "section": "ISS Integrated Medical Group Checklist · §3.1",
+    "tags": ["neurologico", "asimetria facial", "accv", "stroke", "emergencia", "facial"],
+    "text": "Asimetría facial nueva, debilidad unilateral, alteración del habla o visión = posible evento neurológico (equivalente a escala FAST en tierra). Acciones inmediatas: (1) Detener toda actividad; tripulante en posición segura y asistido por otro miembro. (2) Documentar hora de inicio y evolución en intervalos de 5 min. (3) Establecer comunicación prioritaria con Flight Surgeon — canal médico privado, no esperar al pase programado. (4) Videotelemetría del examen: sonrisa (asimetría), brazos elevados 10 s (deriva), frase repetida (disartria). (5) NO administrar medicación sin orden médica. (6) En misión sin retorno posible (tránsito a Marte): preparar protocolo de soporte y decisión de consumibles médicos con la autoridad del comandante y guía de tierra diferida."
+  },
+  {
+    "id": "NASA-STD-3001-4.4.3",
+    "title": "Contramedidas de ejercicio y carga ARED",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §4.4",
+    "tags": ["ejercicio", "ared", "hueso", "musculo", "contramedida", "carga"],
+    "text": "El ejercicio resistivo diario (ARED, ~2 h/día) protege densidad ósea (pérdida ~1-1.5%/mes en microgravedad) y masa muscular, pero debe periodizarse según estado del tripulante. Con fatiga significativa o rendimiento motor reducido: (1) Reducir carga resistiva del día un 15-25% manteniendo el volumen de movimiento — el objetivo es conservar estímulo sin deuda adicional. (2) Priorizar ejercicios de baja complejidad técnica (sentadilla guiada sobre levantamientos olímpicos). (3) Posponer sesiones de alta intensidad aeróbica si hay taquicardia en reposo. (4) Nunca suprimir la sesión completa salvo indicación médica — la pérdida de estímulo diario acelera el desacondicionamiento. (5) Dolor musculoesquelético focal o parestesias: suspender y registrar para evaluación."
+  },
+  {
+    "id": "NASA-STD-3001-5.2.1",
+    "title": "Higiene de sueño y gestión del ciclo vigilia-sueño",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §5.2",
+    "tags": ["sueño", "descanso", "higiene", "circadiano", "luz"],
+    "text": "El estándar exige 8.5 h de periodo de sueño programado; el sueño real medio en ISS es ~6 h. Protocolo de higiene: (1) Atenuar iluminación del módulo a <50 lux y eliminar componente azul 2 h antes del periodo de sueño. (2) Módulo de descanso a 19-22°C, oscuro, con aislamiento acústico. (3) Evitar cafeína en las 8 h previas y pantallas emisoras intensas 60 min antes. (4) Mantener hora de acostarse fija ±30 min incluso tras jornadas extendidas. (5) Si se usa medicación hipnótica (zolpidem, melatonina), registrar dosis/efecto — queda prohibido antes de EVA o tareas de contingencia en <12 h. Fatiga recurrente pese a higiene correcta → evaluación de causas médicas/ambientales."
+  },
+  {
+    "id": "IMG-CHECKLIST-5.4",
+    "title": "Cefalea en vuelo espacial",
+    "section": "ISS Integrated Medical Group Checklist · §5.4",
+    "tags": ["cefalea", "dolor de cabeza", "migraña", "co2", "papel carbon"],
+    "text": "Diferencial de cefalea en vuelo: (1) CO2 ambiental — la causa más común y corregible; verificar ventilación primero. (2) Deshidratación — revisar ingesta y balance hídrico 48 h. (3) Tensión cervicofacial por postura en microgravedad (cuello en extensión sostenida frente a pantallas). (4) Shift de fluido cefálico — congestión típica de las primeras semanas, se autolimita. (5) Cefalea súbita intensa (thunderclap), con déficit focal, vómito progresivo o alteración visual: descartar evento vascular/presión intracraneal — telemetría médica prioritaria. Analgesia: paracetamol o ibuprofeno según kit médico, solo tras descartar causas ambientales; documentar respuesta a los 60 min."
+  },
+  {
+    "id": "NASA-STD-3001-6.1.2",
+    "title": "Monitoreo de radiación espacial",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §6.1",
+    "tags": ["radiacion", "dosimetro", "solar", "sep", "exposicion"],
+    "text": "La dosimetría personal (dosímetro de bolsillo) se revisa en cada turno. Alertas: (1) Evento de partículas solares (SEP) en curso: suspender EVA y reubicarse en la zona de mayor blindaje de la nave (depósito de agua/provisiones). (2) Incremento de dosis acumulada que proyecte exceder límites de misión: registrar y reportar en el siguiente pase. (3) Signos agudos de alta exposición (náusea súbita + debilidad + cefalea tras evento SEP — raro a dosis de cabina): evaluación médica urgente. (4) Fosfenos/destellos ópticos durante el sueño son frecuentes y no constituyen emergencia, pero registrarlos apoya la dosimetría. El deterioro cognitivo persistente sin otra causa justifica revisión del registro de dosis reciente."
+  },
+  {
+    "id": "IMG-CHECKLIST-7.2",
+    "title": "Malestar psicológico y carga de trabajo",
+    "section": "ISS Integrated Medical Group Checklist · §7.2",
+    "tags": ["estres", "psicologia", "ansiedad", "carga de trabajo", "equipo", "aislamiento"],
+    "text": "El estrés sostenido degrada cognición antes que el ánimo reportado. Indicadores objetivos: irritabilidad inusual, errores en tareas dominadas, retraimiento. Acciones: (1) Redistribuir tareas críticas del tripulante afectado por 24-48 h. (2) Programar actividad de ocio de elección propia (música, fotografía, contacto familiar diferido). (3) Micro-protocolo de regulación: respiración diafragmática 4-7-8 durante 3 min o grounding sensorial 5-4-3-2-1 antes de retomar tareas. (4) Comandante informa a PsyOps en comunicación privada programada — sin exponer detalles al resto de la tripulación. (5) Síntomas que comprometan juicio o seguridad (ideación autodestructiva, agitación): protocolo de contención psiquiátrica del kit médico y consulta inmediata."
+  },
+  {
+    "id": "NASA-STD-3001-4.6.1",
+    "title": "Fatiga visual y trabajo en pantalla (SANS excluido)",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §4.6",
+    "tags": ["ojos", "parpadeo", "vision", "pantalla", "fatiga visual", "sequedad"],
+    "text": "La frecuencia de parpadeo basal es ~15-20/min; <8/min o caída >40% indica fatiga visual/superficie ocular seca, agravada en cabinas por baja humedad y flujo de aire. Medidas: (1) Regla visual 20-20-20 adaptada: cada 20 min de pantalla, 20 s de fijación a distancia y parpadeo completo deliberado. (2) Lágrimas artificiales del kit médico si hay sequedad sintomática (en microgravedad usar formulación en gel). (3) Revisar humedad relativa del módulo (objetivo 40-60%) y no orientar la cara al flujo de ventiladores. (4) Ojo rojo unilateral con dolor o fotofobia: descartar cuerpo extraño/lesión corneal antes de atribuir a fatiga. (5) Cambios en agudeza visual o edema de papila documentados → protocolo SANS con fondo de ojo y OCT en el siguiente chequeo médico."
+  },
+  {
+    "id": "IMG-CHECKLIST-2.3",
+    "title": "Taquicardia y síntomas cardiovasculares",
+    "section": "ISS Integrated Medical Group Checklist · §2.3",
+    "tags": ["corazon", "taquicardia", "frecuencia cardiaca", "cardio", "palpitaciones"],
+    "text": "Frecuencia cardiaca en reposo >15% sobre línea basal o >100 lpm sostenida: (1) Confirmar con segunda medición tras 5 min de reposo y postura estable. (2) Revisar causas corregibles en orden: deshidratación (más frecuente), cafeína/estimulantes, fiebre, dolor, ansiedad, post-ejercicio reciente. (3) Si acompaña fatiga: reponer fluidos con electrolitos 400-500 ml y reevaluar a los 45 min. (4) Taquicardia con dolor torácico, disnea, síncope o irregularidad marcada: emergencia médica — ECG del kit, comunicación prioritaria con Flight Surgeon. (5) Arritmia conocida o episodios recurrentes: holter de cabina y registro de eventos. En aislamiento comunicacional, la decisión de medicación antiarrítmica del kit recae en el CMO (Crew Medical Officer) según algoritmo."
+  },
+  {
+    "id": "NASA-STD-3001-8.3.1",
+    "title": "Protocolo de evaluación cognitiva pasiva (contexto del sistema)",
+    "section": "NASA Space Flight Human-System Standard Vol. 2 · §8.3",
+    "tags": ["cognicion", "evaluacion", "monitoreo", "pasivo", "baseline"],
+    "text": "La evaluación de desempeño cognitivo durante misiones de larga duración debe minimizar carga sobre el tripulante y resistir 'gaming' (los astronautas pueden rendir a propósito para evitar ser relevados). Recomendaciones del estándar: (1) Preferir métricas embebidas en tareas operativas reales o en actividades de baja fricción sobre baterías de test dedicadas. (2) Comparar siempre contra línea basal individual intra-sujeto, no contra normas poblacionales. (3) Frecuencia sugerida: evaluaciones breves (<2 min) diarias sobre baterías largas semanales. (4) Triangulación: ningún indicador único (motor, ocular o subjetivo) basta para una decisión de disponibilidad — usar convergencia de ≥2 dominios. (5) Los resultados alimentan apoyo a la decisión, no diagnóstico autónomo; eventos que superen umbrales de seguridad se escalan a la cadena médica."
+  },
+  {
+    "id": "IMG-CHECKLIST-9.1",
+    "title": "Triage rápido: algoritmo de convergencia de señales",
+    "section": "ISS Integrated Medical Group Checklist · §9.1",
+    "tags": ["triage", "algoritmo", "convergencia", "signos vitales", "decision"],
+    "text": "Algoritmo de triage cuando el CMO evalúa sin consulta a tierra: (1) VERDE — un solo dominio alterado leve (<10% sobre basal): registrar, autocuidado, reevaluar en 12-24 h. (2) ÁMBAR — dos dominios alterados o uno >15%: contramedidas activas (hidratación, luz, descanso, carga reducida), retirar de tareas críticas, reevaluar en 4 h. (3) ROJO — tres dominios, cualquier signo neurológico focal, síncope, dolor torácico o deterioro >25%: emergencia a bordo, CMO toma control clínico, comunicación prioritaria al siguiente contacto o canal de emergencia. (4) Documentar siempre: hora, señales, decisión, intervención, respuesta. La convergencia de señales pasivas (ocular + motora + cardiovascular) aumenta especificidad y reduce falsas alarmas respecto a un sensor único."
+  },
+  {
+    "id": "BHP-2.1",
+    "title": "Salud conductual y soporte psicológico en aislamiento",
+    "section": "Behavioral Health and Performance (BHP) Operations",
+    "tags": ["salud mental", "psicologia", "aislamiento", "moral", "equipo", "conductual", "bhp"],
+    "text": "El aislamiento y confinamiento prolongado son el factor psicosocial de mayor riesgo en misiones de larga duración. Ante moral baja reportada o signos de distanciamiento: (1) Preservar contacto social intencional — comidas compartidas y conversación no laboral ≥15 min/día con otro tripulante. (2) Diario de vuelo personal: registrar ánimo, motivo y hora; la escritura estructurada reduce rumiación. (3) Mantener rituales de conexión con Tierra (fotos, mensajes diferidos, objetos personales). (4) Reprogramar la agenda para incluir una actividad de disfrute declarada. (5) Vigilancia por pares: un tripulante que nota retraimiento en otro lo reporta al CMO, no como falta sino como dato de salud. (6) Si la baja moral persiste >7 días o hay ideación negativa: canal de apoyo psicológico BHP prioritario en el siguiente pase de comunicaciones."
+  },
+  {
+    "id": "IMG-CHECKLIST-8.1",
+    "title": "Burnout y sobrecarga psicosocial de tripulación",
+    "section": "ISS Integrated Medical Group Checklist · §8.1",
+    "tags": ["burnout", "estres", "carga de trabajo", "agotamiento", "psicosocial", "mental"],
+    "text": "El burnout de tripulación combina agotamiento, distanciamiento y sensación de baja eficacia — y se confunde con fatiga física. Ante convergencia de enlentecimiento psicomotor + reporte psicológico negativo (moral baja, mal sueño, aislamiento): (1) Reducir la carga de trabajo planificada un 30% durante 48 h — proteger la tarea, no la agenda. (2) Auditar la distribución de turnos y ventanas de sueño de los últimos 7 días. (3) Garantizar una ventana de sueño de 8 h completa y protegida. (4) Micro-descansos estructurados: 10 min de desconexión cada 2 h de trabajo cognitivo. (5) Reevaluación diaria durante 3 días: si la convergencia no remite, restricción de tareas críticas y consulta BHP. La detección temprana evita el error operativo catastrófico: un tripulante en burnout es un factor de riesgo, no una falta de disciplina."
+  },
+  {
+    "id": "BHP-RES-4.7",
+    "title": "Regulación autonómica — respiración 4-7-8 y grounding",
+    "section": "BHP Countermeasures · Auto-regulation",
+    "tags": ["respiracion", "4-7-8", "ansiedad", "regulacion", "calma", "autonomico", "estres"],
+    "text": "La respiración 4-7-8 es la micro-intervención autonómica estándar a bordo: activa el parasimpático en <2 min sin equipamiento. Protocolo: (1) Posición estable sentado o retenido; exhalar completamente por la boca. (2) Inhalar por la nariz contando 4 s. (3) Sostener el aire 7 s. (4) Exhalar por la boca lento y audible durante 8 s. Repetir 3-4 ciclos. Indicaciones: anticipación de tarea crítica, tensión facial detectada, HRV baja, o a petición del tripulante. Complemento: grounding 5-4-3-2-1 (nombrar 5 cosas que ves, 4 que oyes, 3 que tocas, 2 que hueles, 1 que saboreas) si la activación es por estrés situacional. Si la frecuencia cardiaca no baja en 10 min o aparece dolor torácico/disfnea: descartar causa médica, no seguir con regulación sola."
+  }
+]

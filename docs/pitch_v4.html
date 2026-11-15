@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Orbit</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#2b2f36; font-size:9.5pt; line-height:1.45;
+         -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { page-break-after:always; padding:15mm 14mm; }
+  .page:last-child { page-break-after:auto; }
+
+  .band { background:linear-gradient(95deg,#1c2130 60%,#3a2c14); color:#fff; border-radius:12px;
+          padding:18px 22px; position:relative; overflow:hidden; margin-bottom:16px; }
+  .band img { position:absolute; right:-18px; top:-14px; width:150px; opacity:.9;
+              mix-blend-mode:screen; }
+  .band .k { font-size:8pt; letter-spacing:3px; color:#fbbf24; text-transform:uppercase; }
+  .band h1 { font-size:26pt; font-weight:800; margin:6px 0 6px; }
+  .band h1 em { font-style:normal; color:#fbbf24; }
+  .band p { color:#d8dbe2; font-size:10pt; max-width:66%; }
+
+  h2 { font-size:12pt; color:#1c2130; margin:16px 0 10px; }
+  h2::after { content:""; display:block; width:44px; height:3px; background:#f59e0b; margin-top:4px; border-radius:2px; }
+  h2 small { color:#8a8f99; font-weight:400; font-size:8.5pt; }
+
+  /* línea de tiempo vertical */
+  .journey { display:grid; gap:0; }
+  .stop { display:grid; grid-template-columns:70px 26px 1fr; align-items:start; }
+  .stop .t { text-align:right; font-weight:800; color:#b45309; font-size:10pt; padding-top:2px; padding-right:10px; }
+  .stop .rail { position:relative; }
+  .stop .rail::before { content:""; position:absolute; left:50%; top:0; bottom:0; width:2px; background:#e8e0d2; }
+  .stop:last-child .rail::before { bottom:100%; }
+  .stop .rail i { position:absolute; left:50%; top:6px; transform:translateX(-50%);
+                  width:13px; height:13px; border-radius:50%; background:#f59e0b; border:3px solid #fff;
+                  box-shadow:0 0 0 2px #f59e0b; }
+  .stop .c { padding:0 0 18px 14px; }
+  .stop .c b { display:block; color:#1c2130; font-size:10.5pt; }
+  .stop .c p { color:#6b7280; font-size:9pt; max-width:92%; }
+
+  /* badges circulares */
+  .circles { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; text-align:center; }
+  .circle { aspect-ratio:1; border-radius:50%; display:flex; flex-direction:column;
+            align-items:center; justify-content:center; border:3px solid; background:#fff; }
+  .circle b { font-size:15pt; }
+  .circle span { font-size:7pt; letter-spacing:.5px; color:#6b7280; padding:0 10px; }
+  .c1{border-color:#16a34a;color:#16a34a}.c2{border-color:#84cc16;color:#65a30d}
+  .c3{border-color:#f59e0b;color:#b45309}.c4{border-color:#dc2626;color:#b91c1c}
+
+  /* chips */
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { border:1.5px solid #e8e0d2; background:#fbf8f2; border-radius:20px;
+          padding:6px 13px; font-size:8.5pt; color:#3d4450; }
+  .chip b { color:#b45309; }
+
+  .duo { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .panel { border:1px solid #e8e0d2; border-radius:10px; padding:12px 14px; background:#fbf8f2; }
+  .panel b { color:#1c2130; display:block; font-size:10pt; margin-bottom:4px; }
+  .panel p { font-size:9pt; color:#6b7280; }
+
+  .quote { border-left:5px solid #f59e0b; background:#fbf8f2; padding:14px 18px; margin-top:14px;
+           border-radius:0 10px 10px 0; font-size:10.5pt; color:#3d4450; }
+  .quote p { margin-bottom:8px; }
+  .quote p:last-child{margin:0}
+  .quote b { color:#b45309; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="band">
+    <img src="../frontend/assets/saturn.jpg" alt="">
+    <div class="k">NASA Space Apps Challenge 2026</div>
+    <h1>Un minuto al día.<br><em>Toda tu salud, vigilada.</em></h1>
+    <p>Astro-Triage vigila a la tripulación mientras juega — el chequeo médico diario disfrazado de descanso.</p>
+  </div>
+
+  <h2>El viaje del astronauta <small>— sesión de 60 segundos, de principio a fin</small></h2>
+  <div class="journey">
+    <div class="stop"><div class="t">T+0 s</div><div class="rail"><i></i></div>
+      <div class="c"><b>Entra a la consola</b><p>La cámara ya está lista — se preparó sola al abrir la app.</p></div></div>
+    <div class="stop"><div class="t">T+5 s</div><div class="rail"><i></i></div>
+      <div class="c"><b>Un toque opcional</b><p>¿Dolor de cabeza, mareo o náusea? Un solo toque, o nada.</p></div></div>
+    <div class="stop"><div class="t">T+8 s</div><div class="rail"><i></i></div>
+      <div class="c"><b>Pulsa JUGAR</b><p>Cartas de reacción: toca la que coincide con la señal. Parece un juego — es el equivalente al test PVT de la NASA.</p></div></div>
+    <div class="stop"><div class="t">T+60 s</div><div class="rail"><i></i></div>
+      <div class="c"><b>Tres preguntas</b><p>Ánimo, sueño y equipo — tres toques y listo.</p></div></div>
+    <div class="stop"><div class="t">T+65 s</div><div class="rail"><i></i></div>
+      <div class="c"><b>Veredicto en pantalla</b><p>Color, tres acciones, protocolos citados. Nadie pulsó “generar”: el sistema lo hizo solo.</p></div></div>
+  </div>
+
+  <h2>Lo que responde <small>— cuatro niveles operativos</small></h2>
+  <div class="circles">
+    <div class="circle c1"><b>NOMINAL</b><span>mantén tu plan</span></div>
+    <div class="circle c2"><b>VERDE</b><span>vigilar mañana</span></div>
+    <div class="circle c3"><b>ÁMBAR</b><span>actuar hoy</span></div>
+    <div class="circle c4"><b>ROJO</b><span>emergencia</span></div>
+  </div>
+</div>
+
+<div class="page">
+  <h2>Lo que se mide mientras juega <small>— pasivo e invisible</small></h2>
+  <div class="chips">
+    <div class="chip"><b>Reflejos</b> en el juego → mente cansada</div>
+    <div class="chip"><b>Parpadeos</b> → sueño acumulado</div>
+    <div class="chip"><b>Bostezos</b> → fatiga diurna</div>
+    <div class="chip"><b>Asimetría facial</b> → alerta neurológica</div>
+    <div class="chip"><b>Pulso en video</b> → estrés</div>
+    <div class="chip"><b>Mirada perdida</b> → desconexión</div>
+    <div class="chip"><b>Ánimo</b> → aislamiento y burnout</div>
+    <div class="chip"><b>Síntomas</b> → dolor, mareo, náusea</div>
+  </div>
+
+  <h2>La lógica detrás <small>— por qué funciona</small></h2>
+  <div class="duo">
+    <div class="panel"><b>El examen se esconde</b><p>Si el chequeo parece juego, nadie lo evita. La constancia es la cobertura médica.</p></div>
+    <div class="panel"><b>Se compara consigo mismo</b><p>Línea base individual y tendencia de 14 días — el estándar que usa la NASA.</p></div>
+    <div class="panel"><b>Habla en protocolos</b><p>18 fuentes NASA-STD-3001 / IMG / BHP citadas — cada acción tiene su respaldo.</p></div>
+    <div class="panel"><b>No depende de la Tierra</b><p>Todo decide a bordo: cero internet, cero transmisión, cero espera.</p></div>
+  </div>
+
+  <h2>Para el jurado <small>— el mensaje en una lectura</small></h2>
+  <div class="quote">
+    <p><b>«El médico más cercano está a veinte minutos luz.»</b></p>
+    <p>«Así que escondimos el chequeo dentro de un juego de cartas de un minuto. Mientras la tripulación juega, medimos reflejos, ojos, pulso, rostro y ánimo — sin que se dé cuenta.»</p>
+    <p>«Al final, un color y tres acciones, todo citando protocolos reales de la NASA. Sin botones, sin formularios, sin internet.»</p>
+    <p><b>«Porque en el espacio, la constancia es la cobertura médica.»</b></p>
+  </div>
+</div>
+
+</body>
+</html>

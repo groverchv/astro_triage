@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Resumen completo</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; background:#050b14; color:#cfe6f5;
+         font-size:9pt; line-height:1.4; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { page-break-after:always; padding:14mm 14mm 11mm; min-height:283mm; display:flex; flex-direction:column; }
+  .page:last-child { page-break-after:auto; }
+
+  .topbar { display:flex; justify-content:space-between; border-bottom:1px solid #12334d;
+            padding-bottom:7px; margin-bottom:10px; }
+  .topbar .l { color:#22d3ee; font-size:8pt; letter-spacing:3px; }
+  .topbar .r { color:#4b7ea0; font-size:7.5pt; letter-spacing:1px; }
+  .foot { margin-top:auto; border-top:1px solid #12334d; padding-top:7px; color:#4b7ea0;
+          font-size:7.5pt; letter-spacing:1px; display:flex; justify-content:space-between; }
+
+  h1 { font-size:24pt; font-weight:800; color:#fff; }
+  h1 em { font-style:normal; color:#22d3ee; }
+  h2 { font-size:10.5pt; color:#22d3ee; letter-spacing:2px; text-transform:uppercase;
+       border-left:3px solid #22d3ee; padding-left:9px; margin:6mm 0 3.5mm; }
+  h2 .sub { color:#4b7ea0; font-weight:400; text-transform:none; font-size:8.5pt; }
+
+  .cards { display:grid; gap:8px; }
+  .c2{grid-template-columns:1fr 1fr} .c3{grid-template-columns:repeat(3,1fr)} .c4{grid-template-columns:repeat(4,1fr)}
+  .c { border:1px solid #12334d; border-radius:7px; padding:9px 11px; background:#081120; }
+  .c.cyan{border-top:3px solid #22d3ee} .c.green{border-top:3px solid #22c55e}
+  .c.amber{border-top:3px solid #f59e0b} .c.red{border-top:3px solid #ef4444}
+  .c b { color:#fff; display:block; font-size:9pt; margin-bottom:2px; }
+  .c p { font-size:8pt; color:#7fa3bb; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { border:1px solid #12334d; background:#081120; border-radius:7px; padding:6px 11px; font-size:8pt; }
+  .chip b { color:#22d3ee; font-family:Consolas,monospace; font-weight:400; }
+
+  .tele { width:100%; border-collapse:collapse; }
+  .tele td { border-bottom:1px solid #0e2438; padding:5px 9px; font-size:8.5pt; vertical-align:top; }
+  .tele td:first-child { color:#22d3ee; font-family:Consolas,monospace; white-space:nowrap; }
+  .tele td:last-child { color:#9fc3d8; }
+
+  .seq { border-left:2px solid #12334d; margin-left:8px; }
+  .ev { position:relative; padding:0 0 11px 22px; }
+  .ev::before { content:""; position:absolute; left:-6px; top:2px; width:11px; height:11px;
+                border-radius:50%; background:#050b14; border:2px solid #22d3ee; }
+  .ev .t0 { font-family:Consolas,monospace; color:#22d3ee; font-size:8pt; }
+  .ev b { color:#fff; font-size:9.5pt; }
+  .ev p { font-size:8pt; color:#7fa3bb; }
+
+  .callout { border:1px solid #155e75; background:rgba(34,211,238,.07); border-radius:8px;
+             padding:9px 14px; font-size:9pt; color:#a8e6f5; }
+  .lvlbar { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .lvl { border-radius:7px; padding:8px 10px; color:#fff; text-align:center; }
+  .lvl b { display:block; font-size:9.5pt; } .lvl span { font-size:7.5pt; opacity:.9; }
+  .g{background:#15803d}.l{background:#65a30d}.a{background:#d97706}.r{background:#b91c1c}
+</style>
+</head>
+<body>
+
+<!-- ======= PÁG 1 · QUÉ ES + FLUJO + JUEGO ======= -->
+<div class="page">
+  <div class="topbar"><span class="l">ASTRO-TRIAGE // RESUMEN DE PRODUCTO</span><span class="r">NASA SPACE APPS 2026</span></div>
+  <h1 style="font-size:19pt">Todo lo que tiene <em>el sistema</em></h1>
+  <p style="color:#8fb8cf;margin-top:4px">Copiloto de salud invisible: juego de cartas de 60 s + biometría pasiva por cámara + triaje autónomo offline con protocolos NASA reales.</p>
+
+  <h2>El flujo completo <span class="sub">— automático de punta a punta</span></h2>
+  <div class="seq">
+    <div class="ev"><span class="t0">ARRANQUE</span><b> Sensores se precalientan solos</b><p>Cámara + MediaPipe cargan al abrir la app — JUGAR responde al instante.</p></div>
+    <div class="ev"><span class="t0">OPCIONAL</span><b> Síntomas en un toque</b><p>Cefalea · mareo · náusea · “me siento bien”.</p></div>
+    <div class="ev"><span class="t0">60 SEG</span><b> Juego de reacción + captura invisible</b><p>Cartas + cámara grabando 12 señales en segundo plano.</p></div>
+    <div class="ev"><span class="t0">3 TOQUES</span><b> Check-in emocional</b><p>Ánimo · sueño · equipo — preguntas de un toque.</p></div>
+    <div class="ev"><span class="t0">SOLO</span><b> Veredicto automático</b><p>Color + hallazgos + 3 acciones + fuentes + tendencia. Nadie pulsa “generar”.</p></div>
+  </div>
+
+  <h2>El juego <span class="sub">— PVT disfrazado</span></h2>
+  <div class="cards c4">
+    <div class="c cyan"><b>MECÁNICA</b><p>Toca la carta igual a la SEÑAL — o ✕ NINGUNA.</p></div>
+    <div class="c cyan"><b>MIDE</b><p>Latencia, lapsos &gt;500 ms, errores, trials.</p></div>
+    <div class="c cyan"><b>ENGANCHA</b><p>Puntos, racha, símbolos espaciales, 60 s.</p></div>
+    <div class="c cyan"><b>COMPARA</b><p>Δ% contra tu línea base personal guardada.</p></div>
+  </div>
+
+  <h2>La pantalla <span class="sub">— consola NASA sobre espacio real</span></h2>
+  <div class="chips">
+    <div class="chip"><b>FONDO</b> Tierra real girando (NASA Blue Marble)</div>
+    <div class="chip"><b>PLANETAS</b> Luna · Marte · Saturno (fotos reales)</div>
+    <div class="chip"><b>ASTEROIDES</b> Eros real derivando ×3</div>
+    <div class="chip"><b>ESTRELLAS</b> starfield con deriva paralaje</div>
+    <div class="chip"><b>UI</b> consola de instrumentos — un solo botón JUGAR</div>
+    <div class="chip"><b>OFFLINE</b> todos los assets son locales</div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE // RESUMEN</span><span>PÁG 01 / 03</span></div>
+</div>
+
+<!-- ======= PÁG 2 · SENSORES + CHECK-IN + MOTOR ======= -->
+<div class="page">
+  <div class="topbar"><span class="l">ASTRO-TRIAGE // RESUMEN DE PRODUCTO</span><span class="r">SEÑALES Y MOTOR</span></div>
+
+  <h2>Biometría pasiva <span class="sub">— 12 señales por cámara, cero wearables</span></h2>
+  <table class="tele">
+    <tr><td>PARPADEO</td><td>frecuencia/min → alerta y fatiga</td><td>rPPG</td><td>pulso por color de piel → estrés</td></tr>
+    <tr><td>DURACIÓN</td><td>parpadeos largos → párpados pesados</td><td>HRV</td><td>variabilidad cardíaca → calma/estrés</td></tr>
+    <tr><td>PERCLOS</td><td>% ojo cerrado → somnolencia real</td><td>MIRADA</td><td>% fuera de pantalla → desconexión</td></tr>
+    <tr><td>BOSTEZOS</td><td>conteo/sesión → fatiga diurna</td><td>TENSIÓN</td><td>ceño sostenido → estrés o dolor</td></tr>
+    <tr><td>ASIMETRÍA</td><td>lados de la cara → alerta neurológica</td><td>ESCLERA</td><td>enrojecimiento → fatiga visual</td></tr>
+    <tr><td>EAR-ASIM</td><td>apertura ocular dispareja → canal neuro</td><td>BALANCEO</td><td>micro-movimientos → equilibrio</td></tr>
+  </table>
+  <div class="callout" style="margin-top:4mm">Overlay en vivo: la cámara PiP muestra conteo de parpadeos y bostezos — y avisa si todo queda en modo simulado.</div>
+
+  <h2>Check-in emocional <span class="sub">— 3 toques</span></h2>
+  <div class="cards c3">
+    <div class="c cyan"><b>ÁNIMO</b><p>¿Cómo te sientes hoy?</p></div>
+    <div class="c cyan"><b>SUEÑO</b><p>¿Cómo dormiste anoche?</p></div>
+    <div class="c cyan"><b>EQUIPO</b><p>¿Cómo va tu ánimo con el equipo?</p></div>
+  </div>
+
+  <h2>Motor de decisión <span class="sub">— pipeline determinista</span></h2>
+  <div class="seq">
+    <div class="ev"><b>1 · Normaliza</b><p>cada señal contra tu línea base individual (estándar NASA).</p></div>
+    <div class="ev"><b>2 · Clasifica</b><p>hallazgos por severidad (aviso→crítico) y dominio (ojos, neuro, corazón, reflejos, mente…).</p></div>
+    <div class="ev"><b>3 · Cruza patrones</b><p>reflejos lentos + ánimo bajo + mal sueño = fatiga mental severa — no “un mal día”.</p></div>
+    <div class="ev"><b>4 · Consulta RAG local</b><p>buscador semántico en memoria sobre 18 protocolos — sin servicios externos.</p></div>
+    <div class="ev"><b>5 · Narra</b><p>plantilla determinista siempre; Ollama local opcional para redacción mejorada.</p></div>
+  </div>
+
+  <h2>Los 4 niveles</h2>
+  <div class="lvlbar">
+    <div class="lvl g"><b>NOMINAL</b><span>sigue el plan</span></div>
+    <div class="lvl l"><b>VERDE</b><span>vigilar</span></div>
+    <div class="lvl a"><b>ÁMBAR</b><span>actuar hoy</span></div>
+    <div class="lvl r"><b>ROJO</b><span>emergencia</span></div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE // RESUMEN</span><span>PÁG 02 / 03</span></div>
+</div>
+
+<!-- ======= PÁG 3 · CONOCIMIENTO + EXTRAS + STACK ======= -->
+<div class="page">
+  <div class="topbar"><span class="l">ASTRO-TRIAGE // RESUMEN DE PRODUCTO</span><span class="r">CONOCIMIENTO · EXTRAS · STACK</span></div>
+
+  <h2>Biblioteca médica <span class="sub">— 18 protocolos indexados, citados en cada acción</span></h2>
+  <div class="chips">
+    <div class="chip"><b>NASA-STD</b> fatiga circadiana</div>
+    <div class="chip"><b>NASA-STD</b> PVT/vigilancia</div>
+    <div class="chip"><b>NASA-STD</b> deshidratación</div>
+    <div class="chip"><b>NASA-STD</b> ejercicio ARED</div>
+    <div class="chip"><b>NASA-STD</b> vestibular</div>
+    <div class="chip"><b>NASA-STD</b> fatiga visual</div>
+    <div class="chip"><b>NASA-STD</b> higiene sueño</div>
+    <div class="chip"><b>NASA-STD</b> radiación</div>
+    <div class="chip"><b>NASA-STD</b> CO₂</div>
+    <div class="chip"><b>NASA-STD</b> cognitiva pasiva</div>
+    <div class="chip"><b>IMG</b> evento neurológico</div>
+    <div class="chip"><b>IMG</b> cefalea en vuelo</div>
+    <div class="chip"><b>IMG</b> cardiovascular</div>
+    <div class="chip"><b>IMG</b> malestar psicol.</div>
+    <div class="chip"><b>IMG</b> burnout</div>
+    <div class="chip"><b>IMG</b> convergencia señales</div>
+    <div class="chip"><b>BHP</b> soporte aislamiento</div>
+    <div class="chip"><b>BHP</b> respiración 4-7-8</div>
+  </div>
+
+  <h2>Extras incluidos</h2>
+  <div class="cards c3">
+    <div class="c green"><b>TENDENCIA 14 DÍAS</b><p>Barras por día vs tu línea base — visible bajo el veredicto.</p></div>
+    <div class="c green"><b>RESPIRACIÓN 4-7-8</b><p>Micro-intervención guiada si el veredicto detecta estrés o ÁMBAR/ROJO.</p></div>
+    <div class="c green"><b>VOZ DEL VEREDICTO</b><p>Lectura en voz alta con un toque (síntesis de voz local).</p></div>
+    <div class="c amber"><b>MODO JURADO</b><p>Alt+Shift+1/2/3 → escenarios NOMINAL/ÁMBAR/ROJO sin esperar la partida.</p></div>
+    <div class="c amber"><b>MODO SIMULADO</b><p>Sin cámara o sin red: el sistema sigue con valores simulados — nunca en silencio.</p></div>
+    <div class="c amber"><b>ESTADO EN VIVO</b><p>Badge con modo (local-autonomous), vector store y protocolos indexados.</p></div>
+  </div>
+
+  <h2>Autonomía y privacidad</h2>
+  <div class="cards c2">
+    <div class="c cyan"><b>100% A BORDO</b><p>Visión, triaje, RAG y narración corren local — internet nunca está en el camino crítico.</p></div>
+    <div class="c cyan"><b>EL VIDEO NO SALE</b><p>Se procesa en el navegador y muere ahí — salud mental privada por diseño.</p></div>
+  </div>
+
+  <h2>Stack <span class="sub">— lo que hay bajo el capó</span></h2>
+  <table class="tele">
+    <tr><td>FRONTEND</td><td>index.html · app.js (orquestación) · game.js (cartas/PVT) · camera.js (FaceMesh rPPG) · style.css</td></tr>
+    <tr><td>BACKEND</td><td>FastAPI · triage.py (severidad+patrones) · retriever.py (RAG en memoria) · narrator.py (Ollama/plantilla) · 18 protocolos JSON</td></tr>
+    <tr><td>ENDPOINTS</td><td>POST /api/assessment · GET /api/status (mode: local-autonomous · 18 protocolos)</td></tr>
+    <tr><td>ARRANQUE</td><td>run.ps1 / run.sh — backend en :8000 sirviendo también el frontend</td></tr>
+    <tr><td>DOCS</td><td>ANALISIS.md · PITCH_ASTRO-TRIAGE.pdf · PITCH_V1–V5 · DOSSIER (15 págs) · DECK (10 slides)</td></tr>
+  </table>
+
+  <div class="callout" style="margin-top:5mm">En una línea: un juego de un minuto que mide 12+ señales, cruza patrones, cita 18 protocolos NASA y responde en color y tres pasos — 100% a bordo, sin transmitir un byte.</div>
+  <div class="foot"><span>ASTRO-TRIAGE // FIN DEL RESUMEN</span><span>PÁG 03 / 03</span></div>
+</div>
+
+</body>
+</html>

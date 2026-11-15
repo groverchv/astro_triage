@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Informe de vuelo</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; color:#123c3a; font-size:9.5pt; line-height:1.45;
+         -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { page-break-after:always; padding:15mm 14mm; }
+  .page:last-child { page-break-after:auto; }
+
+  /* ficha médica */
+  .chart { border:1.5px solid #0d9488; border-radius:10px; overflow:hidden; margin-bottom:14px; }
+  .chart-head { background:#0d9488; color:#fff; padding:8px 16px; display:flex;
+                justify-content:space-between; font-size:8.5pt; letter-spacing:2px; }
+  .chart-body { padding:14px 18px; display:grid; grid-template-columns:1fr 1fr; gap:4px 20px; }
+  .chart-body .f { font-size:9pt; padding:3px 0; border-bottom:1px dotted #99d5cf; }
+  .chart-body .f b { color:#0d9488; font-size:8pt; letter-spacing:1px; display:block; }
+
+  h1 { font-size:24pt; color:#0f3d3a; font-weight:800; }
+  h1 em { font-style:normal; color:#0d9488; }
+
+  .ekg { display:block; margin:10px 0 6px; }
+
+  h2 { font-size:12pt; color:#0f3d3a; margin:14px 0 8px; }
+  h2 small { color:#5f8a86; font-weight:400; font-size:8.5pt; }
+
+  .vital { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .v { border:1px solid #cde7e4; border-radius:8px; padding:10px 12px; background:#f6fbfa; }
+  .v .ic { margin-bottom:4px; }
+  .v b { display:block; color:#0f3d3a; font-size:9.5pt; }
+  .v p { font-size:8.5pt; color:#5f8a86; }
+
+  .body-grid { display:grid; grid-template-columns:200px 1fr; gap:20px; align-items:center; }
+  .slist { display:grid; gap:6px; }
+  .s { background:#f6fbfa; border-left:4px solid #0d9488; border-radius:6px; padding:7px 11px; font-size:9pt; }
+  .s b { color:#0f3d3a; }
+
+  /* calendario 14 días */
+  .days { display:grid; grid-template-columns:repeat(14,1fr); gap:4px; margin-top:6px; }
+  .day { height:34px; border-radius:5px; display:flex; align-items:flex-end; padding:3px; }
+  .day i { display:block; width:100%; border-radius:3px; }
+  .cap { font-size:8pt; color:#5f8a86; margin-top:4px; }
+
+  .rx { border:1.5px solid #0d9488; border-radius:10px; padding:14px 18px; margin-top:10px; background:#f6fbfa; }
+  .rx .tag { color:#0d9488; font-weight:800; letter-spacing:2px; font-size:8.5pt; }
+  .rx ol { margin:8px 0 0 18px; font-size:9.5pt; }
+  .rx li { padding:2px 0; }
+
+  .summary { background:#0f3d3a; color:#d6efec; border-radius:10px; padding:16px 20px; margin-top:14px; }
+  .summary h3 { color:#5eead4; font-size:9.5pt; letter-spacing:2px; margin-bottom:8px; }
+  .summary p { font-size:9.5pt; margin-bottom:7px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="chart">
+    <div class="chart-head"><span>INFORME DE SALUD DE TRIPULACIÓN</span><span>ASTRO-TRIAGE · 2026</span></div>
+    <div class="chart-body">
+      <div class="f"><b>PACIENTE</b>Tripulación en misión de larga duración</div>
+      <div class="f"><b>MÉDICO DISPONIBLE</b>Ninguno — enlace a Tierra ≈ 20 min</div>
+      <div class="f"><b>MOTIVO</b>Autoevaluación diaria de salud física y mental</div>
+      <div class="f"><b>PRESCRIPCIÓN</b>Un minuto de juego de cartas al día</div>
+    </div>
+  </div>
+
+  <h1>El chequeo diario <em>que no se siente examen.</em></h1>
+  <svg class="ekg" width="100%" height="34" viewBox="0 0 700 34" preserveAspectRatio="none">
+    <path d="M0 17 H120 l10-12 12 24 10-20 8 8 H300 l10-12 12 24 10-20 8 8 H520 l10-12 12 24 10-20 8 8 H700"
+          fill="none" stroke="#0d9488" stroke-width="2"/>
+  </svg>
+  <p style="font-size:10pt;color:#5f8a86;max-width:90%">Astro-Triage toma las constantes vitales de la tripulación mientras juegan — porque un test que se evita no protege a nadie.</p>
+
+  <h2>Signos vitales capturados <small>— sin sensores extra, solo la cámara y el juego</small></h2>
+  <div class="body-grid">
+    <svg viewBox="0 0 150 200">
+      <circle cx="75" cy="46" r="30" fill="#eaf7f5" stroke="#0d9488" stroke-width="1.6"/>
+      <path d="M75 76 v52 M50 94 h50 M60 128 v46 M90 128 v46" stroke="#0d9488" stroke-width="9" stroke-linecap="round" fill="none" opacity=".55"/>
+      <circle cx="66" cy="40" r="3.6" fill="#0d9488"/><circle cx="84" cy="40" r="3.6" fill="#0d9488"/>
+      <circle cx="75" cy="55" r="3.6" fill="#b45309"/>
+      <circle cx="75" cy="100" r="4.5" fill="#dc2626"/>
+      <circle cx="50" cy="95" r="3.6" fill="#15803d"/><circle cx="100" cy="95" r="3.6" fill="#15803d"/>
+    </svg>
+    <div class="slist">
+      <div class="s"><b>Ojos:</b> parpadeos y párpados pesados → cuánto sueño le falta</div>
+      <div class="s"><b>Boca:</b> bostezos → fatiga durante el día</div>
+      <div class="s"><b>Rostro:</b> un lado distinto al otro → alerta neurológica</div>
+      <div class="s"><b>Pecho:</b> pulso y su variación → estrés y corazón</div>
+      <div class="s"><b>Manos:</b> reflejos y errores en el juego → mente cansada</div>
+      <div class="s"><b>Voz del día:</b> 3 toques sobre ánimo, sueño y equipo</div>
+    </div>
+  </div>
+
+  <h2>Historial del paciente <small>— tendencia de 14 días contra su propia línea base</small></h2>
+  <div class="days">
+    <div class="day" style="background:#e6f4f2"><i style="height:80%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:85%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:78%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:82%;background:#0d9488"></i></div>
+    <div class="day" style="background:#fdf3e3"><i style="height:60%;background:#d97706"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:75%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:80%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:83%;background:#0d9488"></i></div>
+    <div class="day" style="background:#fdf3e3"><i style="height:55%;background:#d97706"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:70%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:78%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:82%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:85%;background:#0d9488"></i></div>
+    <div class="day" style="background:#e6f4f2"><i style="height:88%;background:#0d9488"></i></div>
+  </div>
+  <p class="cap">Cada barra = un día. La NASA compara al astronauta contra su propia línea base — nosotros igual.</p>
+</div>
+
+<div class="page">
+  <h2>Diagnóstico simplificado <small>— un color, tres acciones</small></h2>
+  <div class="vital">
+    <div class="v"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg></div><b>NOMINAL</b><p>Constantes en rango. Mantener rutina.</p></div>
+    <div class="v"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#65a30d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".8" fill="#65a30d"/></svg></div><b>VERDE</b><p>Señal suave. Observar mañana.</p></div>
+    <div class="v"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M12 3l10 17H2z"/><path d="M12 10v5"/><circle cx="12" cy="17.5" r=".8" fill="#d97706"/></svg></div><b>ÁMBAR</b><p>Contramedidas hoy. Sin tareas críticas.</p></div>
+    <div class="v"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".9" fill="#dc2626"/></svg></div><b>ROJO</b><p>Protocolo de emergencia. Canal médico ya.</p></div>
+    <div class="v"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"><path d="M12 4a8 8 0 1 0 8 8"/><path d="M12 8a4 4 0 1 0 4 4"/><circle cx="12" cy="12" r="1.4" fill="#0d9488"/></svg></div><b>RESP. 4-7-8</b><p>Micro-intervención guiada cuando el estrés sube.</p></div>
+    <div class="v"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><b>18 PROTOCOLOS</b><p>Toda acción cita su fuente NASA-STD-3001 / IMG / BHP.</p></div>
+  </div>
+
+  <div class="rx">
+    <span class="tag">RECETA — EJEMPLO DE VEREDICTO</span>
+    <ol>
+      <li>Detén tareas críticas. Repite el examen FAST con otro tripulante.</li>
+      <li>Bloquea tu próxima ventana de sueño: 8 h, módulo oscuro, sin cafeína previa.</li>
+      <li>Registra el dolor de cabeza y reevalúa en 4 h. Si empeora, canal médico.</li>
+    </ol>
+  </div>
+
+  <h2>Por qué a bordo <small>— privacidad y autonomía</small></h2>
+  <div class="vital">
+    <div class="v"><b>Cero transmisión</b><p>Nada sale de la nave: la salud mental es privada.</p></div>
+    <div class="v"><b>Sin internet</b><p>Decide a bordo; el enlace llega 20 min tarde.</p></div>
+    <div class="v"><b>Tolerante a fallos</b><p>Si un sensor cae, decide con los demás.</p></div>
+  </div>
+
+  <div class="summary">
+    <h3>RESUMEN CLÍNICO · PITCH 90 S</h3>
+    <p>«Paciente: una tripulación a veinte minutos luz del médico más cercano. Problema: debe examinarse sola, y los tests actuales se posponen por tediosos.»</p>
+    <p>«Tratamiento: un juego de cartas de un minuto al día. Mientras juegan, tomamos las constantes — reflejos, ojos, pulso, rostro, ánimo.»</p>
+    <p>«Al terminar, el informe se redacta solo: un color, tres indicaciones, todas con respaldo de protocolos reales de la NASA.»</p>
+    <p>«Sin internet, sin hardware nuevo, sin disciplina requerida. La salud se mide sola — porque en el espacio, nadie viene a tomarla.»</p>
+  </div>
+</div>
+
+</body>
+</html>

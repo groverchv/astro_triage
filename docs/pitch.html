@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Documento de presentación</title>
+<style>
+  @page { size: A4; margin: 14mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1a2332; font-size: 10.5pt; line-height: 1.45;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+
+  /* ---------- Portada / cabecera de página ---------- */
+  .cover-band {
+    background: linear-gradient(120deg, #060a14 0%, #0b1d33 70%, #0d2b45 100%);
+    color: #fff; border-radius: 10px; padding: 26px 30px; margin-bottom: 18px;
+    position: relative; overflow: hidden;
+  }
+  .cover-band::after {
+    content: "🌍"; position: absolute; right: 26px; top: 50%;
+    transform: translateY(-50%); font-size: 64px; opacity: .9;
+  }
+  .cover-band .kicker {
+    font-size: 8.5pt; letter-spacing: 3px; color: #7dd3fc;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .cover-band h1 { font-size: 26pt; letter-spacing: 1px; font-weight: 800; }
+  .cover-band h1 span { color: #38bdf8; }
+  .cover-band p { color: #cbd5e1; margin-top: 6px; font-size: 10pt; max-width: 75%; }
+  .meta {
+    display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .meta span {
+    background: rgba(56,189,248,.15); border: 1px solid rgba(56,189,248,.4);
+    color: #bae6fd; font-size: 8pt; padding: 3px 10px; border-radius: 20px;
+    letter-spacing: .5px;
+  }
+
+  h2.sec {
+    font-size: 13pt; font-weight: 800; letter-spacing: 1px; color: #0b1d33;
+    border-left: 5px solid #0284c7; padding-left: 10px;
+    margin: 18px 0 10px; text-transform: uppercase;
+  }
+  h2.sec small { color: #64748b; font-weight: 600; letter-spacing: .5px; }
+
+  /* ---------- Caja problema ---------- */
+  .problem {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .pcard {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-top: 4px solid #ef4444;
+    border-radius: 8px; padding: 12px 14px;
+  }
+  .pcard b { display: block; font-size: 11pt; margin-bottom: 4px; color: #991b1b; }
+  .pcard p { font-size: 9.5pt; color: #475569; }
+
+  .hook {
+    background: linear-gradient(90deg, #0b1d33, #0d2b45); color: #fff;
+    border-radius: 8px; padding: 16px 20px; margin: 16px 0;
+    font-size: 13pt; font-weight: 700; text-align: center;
+  }
+  .hook em { color: #7dd3fc; font-style: normal; }
+
+  /* ---------- 3 pasos ---------- */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .step {
+    background: #fff; border: 2px solid #cbd5e1; border-radius: 10px;
+    padding: 14px; position: relative;
+  }
+  .step .n {
+    position: absolute; top: -13px; left: 14px; background: #0284c7; color: #fff;
+    font-weight: 800; font-size: 11pt; width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step .icon { font-size: 24pt; margin: 6px 0 4px; }
+  .step b { display: block; font-size: 10.5pt; margin-bottom: 4px; color: #0b1d33; }
+  .step p { font-size: 9pt; color: #475569; }
+
+  /* ---------- Tablas ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  th, td { text-align: left; padding: 7px 10px; font-size: 9.5pt; }
+  th { background: #0b1d33; color: #7dd3fc; text-transform: uppercase;
+       font-size: 8pt; letter-spacing: 1px; }
+  tr:nth-child(even) td { background: #f1f5f9; }
+  td:first-child { font-weight: 700; color: #0b1d33; }
+  .check { color: #16a34a; font-weight: 800; }
+
+  /* ---------- Niveles ---------- */
+  .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+  .lvl { border-radius: 8px; padding: 10px 12px; color: #fff; }
+  .lvl b { font-size: 11pt; letter-spacing: 1px; display: block; margin-bottom: 3px; }
+  .lvl p { font-size: 8.5pt; opacity: .95; }
+  .lvl.g { background: #16a34a; } .lvl.l { background: #65a30d; }
+  .lvl.a { background: #d97706; } .lvl.r { background: #dc2626; }
+
+  /* ---------- Bullets cortos ---------- */
+  ul.short { list-style: none; }
+  ul.short li { padding: 5px 0 5px 22px; position: relative; font-size: 10pt; }
+  ul.short li::before { content: "▸"; position: absolute; left: 4px; color: #0284c7; font-weight: 800; }
+  ul.short li b { color: #0b1d33; }
+
+  .note {
+    background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px;
+    padding: 10px 14px; font-size: 9.5pt; color: #78350f; margin-top: 10px;
+  }
+
+  /* ---------- Pitch ---------- */
+  .pitch {
+    background: #f8fafc; border: 1.5px solid #0b1d33; border-radius: 10px;
+    padding: 18px 22px; font-size: 10.5pt; color: #1e293b;
+  }
+  .pitch p { margin-bottom: 12px; }
+  .pitch p:last-child { margin: 0; }
+  .pitch .cue { color: #0284c7; font-weight: 800; font-size: 8pt;
+    letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 3px; }
+
+  .footer { margin-top: 14px; text-align: center; font-size: 8pt; color: #94a3b8; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ============ PÁGINA 1 — PROBLEMA + SOLUCIÓN ============ -->
+<div class="page">
+  <div class="cover-band">
+    <div class="kicker">NASA Space Apps Challenge 2026 · Monitoreo de salud para astronautas</div>
+    <h1>ASTRO-<span>TRIAGE</span></h1>
+    <p>Copiloto de salud invisible: el astronauta no hace un examen — juega 60 segundos, y el sistema evalúa su salud solo.</p>
+    <div class="meta">
+      <span>100% A BORDO</span><span>SIN INTERNET</span><span>PROTOCOLOS NASA REALES</span><span>CERO FATIGA DE USO</span>
+    </div>
+  </div>
+
+  <h2 class="sec">El problema <small>— lo que pide el desafío</small></h2>
+  <div class="problem">
+    <div class="pcard">
+      <b>Está solo</b>
+      <p>La Tierra responde con ~20 minutos de retraso. En una emergencia, no hay médico en línea: el astronauta debe autoevaluarse.</p>
+    </div>
+    <div class="pcard">
+      <b>El espacio enferma</b>
+      <p>Radiación, aislamiento, confinamiento y gravedad alterada: afectan sueño, corazón, huesos, inmunidad y salud mental.</p>
+    </div>
+    <div class="pcard">
+      <b>Los exámenes aburren</b>
+      <p>Los tests médicos actuales (tipo PVT) son tediosos → se posponen → los problemas se detectan tarde.</p>
+    </div>
+  </div>
+
+  <div class="hook">«El astronauta no hace un examen. <em>Juega 60 segundos</em> — el sistema observa y evalúa solo.»</div>
+
+  <h2 class="sec">La solución <small>— cómo funciona</small></h2>
+  <div class="steps" style="margin-top:16px">
+    <div class="step">
+      <div class="n">1</div>
+      <div class="icon">🎴</div>
+      <b>JUEGA</b>
+      <p>Un juego de cartas de reacción de 60 segundos. Parece un descanso; por dentro mide reflejos, atención y errores — lo que la NASA mide con el test PVT.</p>
+    </div>
+    <div class="step">
+      <div class="n">2</div>
+      <div class="icon">📷</div>
+      <b>LA CÁMARA OBSERVA</b>
+      <p>Sin tocar nada: parpadeos, ojos pesados, bostezos, tensión facial, pulso y mirada perdida. El astronauta solo juega.</p>
+    </div>
+    <div class="step">
+      <div class="n">3</div>
+      <div class="icon">🩺</div>
+      <b>VEREDICTO AUTOMÁTICO</b>
+      <p>Un color + tres acciones concretas, basadas en protocolos médicos reales de la NASA. Sin botones, sin formularios, sin esperas.</p>
+    </div>
+  </div>
+
+  <div class="note">⚡ <b>Por qué es diferente:</b> es el único sistema de monitoreo que el astronauta <b>quiere</b> abrir — porque no siente que lo están examinando.</div>
+</div>
+
+<!-- ============ PÁGINA 2 — QUÉ MIDE + CUMPLIMIENTO DEL DESAFÍO ============ -->
+<div class="page">
+  <h2 class="sec">Qué mide <small>— sin que lo notes</small></h2>
+  <table>
+    <tr><th>Señal capturada</th><th>Qué detecta, en palabras simples</th></tr>
+    <tr><td>🎮 Reflejos en el juego</td><td>Mente lenta o cansada (tiempo de reacción, lapsos de atención)</td></tr>
+    <tr><td>👁 Parpadeos y pesadez de ojos</td><td>Sueño acumulado</td></tr>
+    <tr><td>😮 Bostezos</td><td>Fatiga durante el día</td></tr>
+    <tr><td>😐 Los dos lados de la cara</td><td>Alerta neurológica — la señal más grave del sistema</td></tr>
+    <tr><td>❤️ Pulso por cámara</td><td>Corazón acelerado, estrés (variabilidad cardíaca)</td></tr>
+    <tr><td>👀 Mirada que se va</td><td>Distracción, desconexión mental</td></tr>
+    <tr><td>💬 3 preguntas de ánimo</td><td>Salud mental y sensación de aislamiento</td></tr>
+    <tr><td>🤕 Síntomas al entrar</td><td>Dolor de cabeza, mareo, náusea — un toque, opcional</td></tr>
+  </table>
+
+  <h2 class="sec">El veredicto <small>— un color, tres acciones</small></h2>
+  <div class="levels">
+    <div class="lvl g"><b>NOMINAL</b><p>Todo en tu línea base. Sigue tu plan.</p></div>
+    <div class="lvl l"><b>VERDE</b><p>Observación — señal suave, vigilar.</p></div>
+    <div class="lvl a"><b>ÁMBAR</b><p>Contramedidas hoy. Sin tareas críticas.</p></div>
+    <div class="lvl r"><b>ROJO</b><p>Emergencia — protocolo médico ya.</p></div>
+  </div>
+
+  <h2 class="sec">Cumplimiento del desafío NASA <small>— punto por punto</small></h2>
+  <table>
+    <tr><th>Lo que pide el desafío</th><th>Cómo lo cumplimos</th><th></th></tr>
+    <tr><td>Herramienta visual clara</td><td>Veredicto por color + 3 pasos numerados, lectura de un vistazo</td><td class="check">✓</td></tr>
+    <tr><td>Entrada por cámara / clics / teclado</td><td>Cámara pasiva + juego de clics + check-in de 3 toques</td><td class="check">✓</td></tr>
+    <tr><td>Gamificación</td><td>El «examen» ES el juego — la rutina médica se disfraza de descanso</td><td class="check">✓</td></tr>
+    <tr><td>Indicadores en el tiempo</td><td>Tendencia de 14 días contra la línea base propia (estándar NASA)</td><td class="check">✓</td></tr>
+    <tr><td>Instrucciones simples</td><td>Una regla de juego en 11 palabras; veredicto en lenguaje de cabina</td><td class="check">✓</td></tr>
+    <tr><td>Actuar sobre la salud</td><td>Contramedidas concretas + respiración 4-7-8 guiada en pantalla</td><td class="check">✓</td></tr>
+    <tr><td>Salud conductual</td><td>Check-in de ánimo + detección de aislamiento y burnout</td><td class="check">✓</td></tr>
+  </table>
+
+  <h2 class="sec">Nadie se compara con nadie</h2>
+  <ul class="short">
+    <li><b>Línea base individual:</b> cada astronauta se compara contra sí mismo — como hace la NASA, no contra promedios genéricos.</li>
+    <li><b>Protocolos reales:</b> el motor consulta 18 protocolos médicos (NASA-STD-3001, checklists IMG, salud conductual BHP) y cita la fuente de cada recomendación.</li>
+    <li><b>Honesto:</b> declara «soporte de decisión — no es diagnóstico médico», igual que un checklist de vuelo.</li>
+  </ul>
+</div>
+
+<!-- ============ PÁGINA 3 — POR QUÉ GANA + DEMO + PITCH ============ -->
+<div class="page">
+  <h2 class="sec">Por qué importa <small>— los 4 diferenciadores</small></h2>
+  <div class="problem" style="grid-template-columns:1fr 1fr">
+    <div class="pcard" style="border-top-color:#0284c7">
+      <b style="color:#0b1d33">1 · Invisible</b>
+      <p>Cero fatiga de monitoreo. El astronauta juega; la salud se mide sola. La adopción no depende de la disciplina.</p>
+    </div>
+    <div class="pcard" style="border-top-color:#0284c7">
+      <b style="color:#0b1d33">2 · Autónomo</b>
+      <p>Decide sin médico en línea — diseñado para el retardo Tierra–Marte. Si la cámara falla, sigue con lo que tiene: nunca deja sin respuesta.</p>
+    </div>
+    <div class="pcard" style="border-top-color:#0284c7">
+      <b style="color:#0b1d33">3 · Evidencia real</b>
+      <p>No inventa consejos: cada acción citada viene de un protocolo NASA-STD-3001 o checklist IMG indexado localmente.</p>
+    </div>
+    <div class="pcard" style="border-top-color:#0284c7">
+      <b style="color:#0b1d33">4 · Privado</b>
+      <p>100% del análisis ocurre a bordo. Nada se transmite: la salud mental del astronauta es suya.</p>
+    </div>
+  </div>
+
+  <h2 class="sec">La demo <small>— 60 segundos ante el jurado</small></h2>
+  <ul class="short">
+    <li><b>Abrir la app</b> → la cámara y los sensores arrancan solos («Análisis 100% local»).</li>
+    <li><b>Pulsar JUGAR</b> → partida de cartas de 60 s — instantánea, sin esperas.</li>
+    <li><b>El resto ocurre solo:</b> señales → 3 preguntas de ánimo → veredicto con color, plan de acción y protocolos citados.</li>
+    <li><b>Modo jurado:</b> Alt + Shift + 1/2/3 proyecta los escenarios NOMINAL / ÁMBAR / ROJO sin esperar la partida.</li>
+  </ul>
+
+  <div class="note">🛠 <b>Tecnología, en una línea:</b> FastAPI local + HTML/JS · visión por cámara en el navegador (MediaPipe) · buscador local sobre 18 protocolos NASA · narración por plantilla u Ollama · <b>cero servicios externos</b>.</div>
+
+  <h2 class="sec">El pitch <small>— guion de 90 segundos</small></h2>
+  <div class="pitch">
+    <p><span class="cue">1 · El ganchillo (15 s)</span>
+    «A veinte minutos luz de la Tierra no hay médico, no hay WiFi y no hay “pregúntale a Houston”. El astronauta debe examinarse a sí mismo — y los tests médicos actuales son tan tediosos que se posponen.»</p>
+    <p><span class="cue">2 · La solución (30 s)</span>
+    «Astro-Triage convierte el examen diario en algo que la tripulación quiere hacer: un juego de cartas de 60 segundos. Mientras juega, la cámara mide parpadeos, bostezos, tensión facial y pulso; el juego mide reflejos y atención — lo mismo que el PVT de la NASA, sin sentirse un examen.»</p>
+    <p><span class="cue">3 · El resultado (25 s)</span>
+    «Al terminar — sin pulsar ningún botón — el sistema cruza todas las señales con dieciocho protocolos médicos reales de la NASA y responde en un color y tres pasos: qué pasó, qué hacer, cuándo preocuparse.»</p>
+    <p><span class="cue">4 · El cierre (15 s)</span>
+    «Todo ocurre a bordo, sin internet, sin transmitir un solo byte. Cuando no hay médico disponible, la autonomía médica no es un lujo: es la misión.»</p>
+  </div>
+
+  <div class="footer">ASTRO-TRIAGE · NASA Space Apps Challenge 2026 · Análisis 100% local — nada se transmite fuera de la nave</div>
+</div>
+
+</body>
+</html>
