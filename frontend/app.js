@@ -68,52 +68,103 @@ const PSYCH_QUESTIONS_ALL = {
     {
       q: "¿Cómo te sientes hoy?",
       key: "mood",
-      opts: [["Con energía", "ok"], ["Cansado", "bajo"], ["Muy bajo de ánimo", "malo"]],
+      opts: [
+        ["Con energía", "ok", ["energía", "energia", "bien", "genial", "motivado", "motivada"]],
+        ["Cansado", "bajo", ["cansado", "cansada", "agotado", "agotada", "fatigado", "fatigada"]],
+        ["Muy bajo de ánimo", "malo", ["muy bajo", "bajo de ánimo", "muy mal", "terrible", "deprimido", "deprimida", "fatal"]],
+      ],
     },
     {
       q: "¿Cómo dormiste anoche?",
       key: "sleep",
-      opts: [["Bien, dormí completo", "ok"], ["Me desperté varias veces", "regular"], ["Casi no dormí", "mal"]],
+      opts: [
+        ["Bien, dormí completo", "ok", ["completo", "completa", "dormí bien", "toda la noche", "perfecto", "genial"]],
+        ["Me desperté varias veces", "regular", ["varias veces", "desperté", "desperte", "regular", "interrumpido", "más o menos"]],
+        ["Casi no dormí", "mal", ["casi no", "apenas", "no dormí", "poco", "horrible", "mal"]],
+      ],
     },
     {
       q: "Última: ¿cómo va tu ánimo con el equipo?",
       key: "social",
-      opts: [["Bien, conectado", "ok"], ["Algo distante", "distante"], ["Me siento aislado", "aislado"]],
+      opts: [
+        ["Bien, conectado", "ok", ["conectado", "conectada", "unido", "unida", "genial", "bien"]],
+        ["Algo distante", "distante", ["distante", "distanciado", "distanciada", "un poco", "regular"]],
+        ["Me siento aislado", "aislado", ["aislado", "aislada", "siento solo", "siento sola", "me siento solo"]],
+      ],
     },
   ],
   en: [
     {
       q: "How do you feel today?",
       key: "mood",
-      opts: [["Energetic", "ok"], ["Tired", "bajo"], ["Very low spirits", "malo"]],
+      opts: [
+        ["Energetic", "ok", ["energetic", "good", "great", "fine", "motivated"]],
+        ["Tired", "bajo", ["tired", "exhausted", "fatigued", "worn out", "sleepy"]],
+        ["Very low spirits", "malo", ["very low", "terrible", "awful", "depressed", "down", "bad"]],
+      ],
     },
     {
       q: "How did you sleep last night?",
       key: "sleep",
-      opts: [["Well, full night", "ok"], ["Woke up several times", "regular"], ["Barely slept", "mal"]],
+      opts: [
+        ["Well, full night", "ok", ["full night", "slept well", "well", "great", "good"]],
+        ["Woke up several times", "regular", ["woke up", "several times", "so-so", "okay", "interrupted", "regular"]],
+        ["Barely slept", "mal", ["barely", "hardly", "didn't sleep", "bad", "terrible", "poorly"]],
+      ],
     },
     {
       q: "Last one: how's your morale with the crew?",
       key: "social",
-      opts: [["Good, connected", "ok"], ["A bit distant", "distante"], ["I feel isolated", "aislado"]],
+      opts: [
+        ["Good, connected", "ok", ["good", "connected", "great", "close", "fine"]],
+        ["A bit distant", "distante", ["distant", "far", "kind of", "regular"]],
+        ["I feel isolated", "aislado", ["isolated", "alone", "lonely", "left out"]],
+      ],
     },
   ],
 };
+
+/* ---------- Voz: check-in por micrófono en tiempo real ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let voiceRec = null;
+
+function stopVoice() {
+  try { voiceRec && voiceRec.abort(); } catch { /* nada */ }
+  voiceRec = null;
+}
+
+function startVoice(onSpeech) {
+  if (!SR) return;
+  stopVoice();
+  const rec = new SR();
+  voiceRec = rec;
+  rec.lang = Lang.get() === "en" ? "en-US" : "es-ES";
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.onresult = e => {
+    const r = e.results[e.results.length - 1];
+    onSpeech(r[0].transcript, r.isFinal);
+  };
+  rec.onerror = rec.onend = () => { voiceRec = null; };
+  try { rec.start(); } catch { /* sin permiso/micro: quedan los botones */ }
+}
 
 function showHubzyCheckin(onDone) {
   const modal = $("hubzyModal");
   if (!modal) { if (onDone) onDone(); return; }
   AppState.psych_answers = [];
   modal.classList.remove("hidden");
-  const txt = $("npcText"), ans = $("npcAnswers");
+  const txt = $("npcText"), ans = $("npcAnswers"), voice = $("npcVoice");
   const PSYCH_QUESTIONS = PSYCH_QUESTIONS_ALL[Lang.get()] || PSYCH_QUESTIONS_ALL.es;
   let qi = 0;
 
   function ask() {
+    stopVoice();
     const Q = PSYCH_QUESTIONS[qi];
     ans.innerHTML = "";
     typeText(txt, Q.q, () => {
-      for (const [label, val] of Q.opts) {
+      const btns = [];
+      for (const [label, val, kws] of Q.opts) {
         const b = document.createElement("button");
         b.className = "npc-btn";
         b.textContent = label;
@@ -122,11 +173,32 @@ function showHubzyCheckin(onDone) {
           qi++;
           if (qi < PSYCH_QUESTIONS.length) ask(); else close_();
         };
+        btns.push({ b, kws: kws || [] });
         ans.appendChild(b);
+      }
+      // Escucha activa: una palabra clave dispara la opción al instante
+      if (voice && SR) {
+        voice.textContent = L("🎙 escuchando… di tu respuesta en voz alta",
+                              "🎙 listening… say your answer out loud");
+        let fired = false;
+        startVoice(speech => {
+          const norm = speech.toLowerCase();
+          voice.textContent = "🎙 " + speech;
+          if (fired) return;
+          for (const { b, kws } of btns) {
+            if (kws.some(k => norm.includes(k))) {
+              fired = true;
+              b.click();
+              break;
+            }
+          }
+        });
       }
     });
   }
   function close_() {
+    stopVoice();
+    if (voice) voice.textContent = "";
     ans.innerHTML = "";
     typeText(txt, L("Anotado, comandante. Generando tu veredicto con esto en cuenta…",
                     "Noted, commander. Generating your verdict with this in mind…"), () => {

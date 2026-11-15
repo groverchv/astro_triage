@@ -34,6 +34,7 @@ VERDICT      ──► NOMINAL / VERDE / ÁMBAR / ROJO
 - **Reaction card game (30 s)** — match the SIGNAL card or ✕ NONE. Measures latency, lapses and errors like a PVT without feeling like a test.
 - **Passive camera biometrics** — blink rate/duration, PERCLOS, yawns, facial asymmetry (neuro alert), EAR asymmetry, head sway, rPPG heart rate, HRV stress, gaze-away, face tension, sclera redness.
 - **3-tap emotional check-in** — mood, sleep, crew connection, plus optional symptom taps (headache, dizziness, nausea).
+- **Voice-answered check-in** — questions can be answered hands-free via Web Speech API: live transcript, keyword matching, ES/EN. Buttons remain as fallback.
 - **Autonomous triage engine** — signal-convergence algorithm (IMG-9.1 style): severity × domain findings, composite patterns, 4 operational levels.
 - **18 indexed protocols** — NASA-STD-3001, IMG checklists and behavioral-health (BHP) docs, cited in every recommended action.
 - **Personal baseline** — each astronaut is compared against their own history (the NASA standard), with a 14-day trend.
