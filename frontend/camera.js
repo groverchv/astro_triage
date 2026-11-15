@@ -134,7 +134,30 @@ const Bio = (() => {
     const ctx = cv.getContext("2d");
     ctx.clearRect(0, 0, cv.width, cv.height);
 
-    if (!res.multiFaceLandmarks || !res.multiFaceLandmarks.length) return;
+    if (!res.multiFaceLandmarks || !res.multiFaceLandmarks.length) {
+      // modo búsqueda — barrido de escaneo + visor
+      const t = performance.now();
+      const sy = (t % 2400) / 2400 * cv.height;
+      const g = ctx.createLinearGradient(0, sy - 50, 0, sy);
+      g.addColorStop(0, "rgba(34,211,238,0)");
+      g.addColorStop(1, "rgba(34,211,238,.22)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, sy - 50, cv.width, 50);
+      ctx.strokeStyle = "#22d3ee"; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(cv.width, sy); ctx.stroke();
+      const m = 18, cl = 22;
+      ctx.lineWidth = 2.5;
+      for (const [cx, cy, dx, dy] of [[m, m, 1, 1], [cv.width - m, m, -1, 1],
+                                      [m, cv.height - m, 1, -1], [cv.width - m, cv.height - m, -1, -1]]) {
+        ctx.beginPath();
+        ctx.moveTo(cx + cl * dx, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + cl * dy);
+        ctx.stroke();
+      }
+      ctx.font = "600 10px Consolas, monospace";
+      ctx.fillStyle = "#22d3ee";
+      ctx.fillText("SCANNING" + ".".repeat(1 + (Math.floor(t / 400) % 3)), m + 8, m + 16);
+      return;
+    }
     state.sawFace = true;
     const lm = res.multiFaceLandmarks[0];
     const now = performance.now();
@@ -336,6 +359,18 @@ const Bio = (() => {
     ctx.font = "600 10px Consolas, monospace";
     ctx.fillStyle = "#22d3ee";
     ctx.fillText(closed ? "TRACKING · BLINK" : "TRACKING", bx, by - 6);
+
+    // línea de análisis recorriendo el rostro + lecturas en vivo
+    const sy2 = by + ((performance.now() % 2000) / 2000) * bh;
+    const g2 = ctx.createLinearGradient(0, sy2 - 28, 0, sy2);
+    g2.addColorStop(0, "rgba(34,211,238,0)");
+    g2.addColorStop(1, "rgba(34,211,238,.18)");
+    ctx.fillStyle = g2;
+    ctx.fillRect(bx, sy2 - 28, bw, 28);
+    ctx.strokeStyle = "rgba(34,211,238,.75)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(bx, sy2); ctx.lineTo(bx + bw, sy2); ctx.stroke();
+    ctx.fillStyle = "#22d3ee";
+    ctx.fillText(`EAR ${e.toFixed(2)}  MAR ${mar.toFixed(2)}`, bx, by + bh + 12);
 
   }
 
