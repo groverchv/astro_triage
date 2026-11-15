@@ -256,31 +256,86 @@ const Bio = (() => {
     if (warmed && state.frameN % 3 === 0) sampleRppg(res, lm, now);
     state.frameN++;
 
-    // ---------- overlay ----------
+    // ---------- overlay: análisis facial visible ----------
     const P = i => ({ x: lm[i].x * cv.width, y: lm[i].y * cv.height });
+    const closed = e < th.close;
+
+    // nube de landmarks — toda la cara escaneada
+    ctx.fillStyle = "rgba(56, 189, 248, .30)";
+    for (let k = 0; k < lm.length; k += 2) {
+      ctx.fillRect(lm[k].x * cv.width - 0.7, lm[k].y * cv.height - 0.7, 1.4, 1.4);
+    }
+
+    // óvalo facial (contorno de la cara)
+    const OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288,
+                  397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136,
+                  172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109];
+    ctx.lineWidth = 1.4;
+    ctx.strokeStyle = "#38bdf880";
+    ctx.beginPath();
+    OVAL.forEach((i, k) => k ? ctx.lineTo(P(i).x, P(i).y) : ctx.moveTo(P(i).x, P(i).y));
+    ctx.closePath(); ctx.stroke();
+
+    // ojos (EAR) — verde abiertos / ámbar parpadeando
     ctx.lineWidth = 2;
-    ctx.strokeStyle = e < th.close ? "#22c55e" : "#38bdf8";
+    ctx.strokeStyle = closed ? "#f59e0b" : "#22c55e";
     for (const eye of [L_EYE, R_EYE]) {
       ctx.beginPath();
       eye.forEach((i, k) => k ? ctx.lineTo(P(i).x, P(i).y) : ctx.moveTo(P(i).x, P(i).y));
-      ctx.closePath();
+      ctx.closePath(); ctx.stroke();
+    }
+
+    // iris — seguimiento de mirada
+    if (lm[IRIS_L] && lm[IRIS_R]) {
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "#f59e0b";
+      ctx.fillStyle = "#f59e0b";
+      for (const ir of [IRIS_L, IRIS_R]) {
+        ctx.beginPath(); ctx.arc(P(ir).x, P(ir).y, 4, 0, 7); ctx.stroke();
+        ctx.beginPath(); ctx.arc(P(ir).x, P(ir).y, 1.6, 0, 7); ctx.fill();
+      }
+    }
+
+    // boca — verde cerrada / rojo si detecta bostezo (MAR)
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = mar > MAR_YAWN ? "#ef4444" : "#84cc16";
+    ctx.beginPath();
+    ctx.moveTo(P(MOUTH_L).x, P(MOUTH_L).y);
+    ctx.lineTo(P(LIP_UP).x, P(LIP_UP).y);
+    ctx.lineTo(P(MOUTH_R).x, P(MOUTH_R).y);
+    ctx.lineTo(P(LIP_LO).x, P(LIP_LO).y);
+    ctx.closePath(); ctx.stroke();
+
+    // cejas — tensión facial (ceño fruncido)
+    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = "#c084fc";
+    for (const brow of [[70, 63, 105, 66, 107], [336, 296, 334, 293, 300]]) {
+      ctx.beginPath();
+      brow.forEach((i, k) => k ? ctx.lineTo(P(i).x, P(i).y) : ctx.moveTo(P(i).x, P(i).y));
       ctx.stroke();
     }
-    ctx.strokeStyle = "#f59e0b";
-    ctx.beginPath();
-    ctx.moveTo(P(33).x, P(33).y);
-    ctx.lineTo(P(263).x, P(263).y);
-    ctx.stroke();
-    ctx.strokeStyle = "#38bdf866";
-    const xs = lm.map(p => p.x * cv.width), ys = lm.map(p => p.y * cv.height);
-    ctx.strokeRect(
-      Math.min(...xs), Math.min(...ys),
-      Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)
-    );
+
+    // nariz — referencia de estabilidad
     ctx.fillStyle = "#ef4444";
-    ctx.beginPath();
-    ctx.arc(P(NOSE_TIP).x, P(NOSE_TIP).y, 4, 0, 7);
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(P(NOSE_TIP).x, P(NOSE_TIP).y, 3.5, 0, 7); ctx.fill();
+
+    // recuadro HUD + esquinas + etiqueta
+    const xs = lm.map(p => p.x * cv.width), ys = lm.map(p => p.y * cv.height);
+    const bx = Math.min(...xs), by = Math.min(...ys);
+    const bw = Math.max(...xs) - bx, bh = Math.max(...ys) - by;
+    ctx.strokeStyle = "#38bdf855"; ctx.lineWidth = 1;
+    ctx.strokeRect(bx, by, bw, bh);
+    ctx.strokeStyle = "#22d3ee"; ctx.lineWidth = 2.5;
+    const cl = 14; // largo de esquina
+    for (const [cx, cy, dx, dy] of [[bx, by, 1, 1], [bx + bw, by, -1, 1],
+                                    [bx, by + bh, 1, -1], [bx + bw, by + bh, -1, -1]]) {
+      ctx.beginPath();
+      ctx.moveTo(cx + cl * dx, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + cl * dy);
+      ctx.stroke();
+    }
+    ctx.font = "600 10px Consolas, monospace";
+    ctx.fillStyle = "#22d3ee";
+    ctx.fillText(closed ? "TRACKING · BLINK" : "TRACKING", bx, by - 6);
 
   }
 
