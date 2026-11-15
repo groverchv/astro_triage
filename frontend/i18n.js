@@ -10,7 +10,7 @@
 const I18N = {
   es: {
     "h.reto": "RETO DE REACCIÓN",
-    "sub.reto": "sesión diaria de 60 segundos",
+    "sub.reto": "sesión diaria de 30 segundos",
     "lbl.signal": "SEÑAL",
     "lbl.points": "PUNTOS",
     "lbl.streak": "RACHA",
@@ -18,7 +18,7 @@ const I18N = {
     "lbl.time": "TIEMPO",
     "hint.rule": "Toca la carta igual a la <b>SEÑAL</b> — o <b>✕ NINGUNA</b> si no hay ninguna.",
     "game.ready": "Listo. Pulsa JUGAR.",
-    "btn.play": "▸ JUGAR · 60 s",
+    "btn.play": "▸ JUGAR · 30 s",
     "cam.msg": "Activando sensores…",
     "cam.note": "Análisis 100 % local — nada se transmite fuera de la nave",
     "h.signals": "ANÁLISIS DE LA SESIÓN",
@@ -38,7 +38,7 @@ const I18N = {
   },
   en: {
     "h.reto": "REACTION CHALLENGE",
-    "sub.reto": "daily 60-second session",
+    "sub.reto": "daily 30-second session",
     "lbl.signal": "SIGNAL",
     "lbl.points": "SCORE",
     "lbl.streak": "STREAK",
@@ -46,7 +46,7 @@ const I18N = {
     "lbl.time": "TIME",
     "hint.rule": "Tap the card matching the <b>SIGNAL</b> — or <b>✕ NONE</b> if there's no match.",
     "game.ready": "Ready. Press PLAY.",
-    "btn.play": "▸ PLAY · 60 s",
+    "btn.play": "▸ PLAY · 30 s",
     "cam.msg": "Activating sensors…",
     "cam.note": "100% local analysis — nothing leaves the ship",
     "h.signals": "SESSION ANALYSIS",

@@ -2,7 +2,7 @@
 
 **Invisible Health Copilot for Astronauts** — NASA Space Apps Challenge 2026
 
-> The astronaut doesn't take a medical exam. They play 60 seconds of a card game — and the ship evaluates their health on its own.
+> The astronaut doesn't take a medical exam. They play 30 seconds of a card game — and the ship evaluates their health on its own.
 
 ![Astro-Triage console](docs/app_main.png)
 
@@ -12,12 +12,12 @@ On long-duration missions (Mars-class), the nearest physician is ~20 light-minut
 
 ## The idea
 
-Hide the daily health check inside something the crew *wants* to do: a 60-second reaction card game. While they play, passive camera biometrics and gameplay performance are collected in the background. An offline triage engine then issues a color-coded operational verdict with concrete countermeasures — citing real NASA protocols.
+Hide the daily health check inside something the crew *wants* to do: a 30-second reaction card game. While they play, passive camera biometrics and gameplay performance are collected in the background. An offline triage engine then issues a color-coded operational verdict with concrete countermeasures — citing real NASA protocols.
 
 ## How it works
 
 ```
-JUGAR / PLAY  ──► 60 s card game (visible)
+JUGAR / PLAY  ──► 30 s card game (visible)
                    ├─ gameplay: latency, >500 ms lapses, error rate (PVT-equivalent)
                    └─ camera (invisible): 12 passive biomedical signals
 AUTO FLOW    ──► 3-tap check-in: mood · sleep · crew morale + optional symptoms
@@ -31,7 +31,7 @@ VERDICT      ──► NOMINAL / VERDE / ÁMBAR / ROJO
 
 ## Features
 
-- **Reaction card game (60 s)** — match the SIGNAL card or ✕ NONE. Measures latency, lapses and errors like a PVT without feeling like a test.
+- **Reaction card game (30 s)** — match the SIGNAL card or ✕ NONE. Measures latency, lapses and errors like a PVT without feeling like a test.
 - **Passive camera biometrics** — blink rate/duration, PERCLOS, yawns, facial asymmetry (neuro alert), EAR asymmetry, head sway, rPPG heart rate, HRV stress, gaze-away, face tension, sclera redness.
 - **3-tap emotional check-in** — mood, sleep, crew connection, plus optional symptom taps (headache, dizziness, nausea).
 - **Autonomous triage engine** — signal-convergence algorithm (IMG-9.1 style): severity × domain findings, composite patterns, 4 operational levels.
@@ -55,7 +55,7 @@ powershell -File run.ps1
 bash run.sh
 ```
 
-Open **http://127.0.0.1:8000** → press **▸ JUGAR · 60 s** → the rest happens automatically.
+Open **http://127.0.0.1:8000** → press **▸ JUGAR · 30 s** → the rest happens automatically.
 
 ## Architecture
 
@@ -111,7 +111,7 @@ curl -X POST http://127.0.0.1:8000/api/assessment \
 
 ## Resumen en español
 
-Copiloto de salud invisible para astronautas: un juego de cartas de 60 segundos que, mientras se juega, captura 12 señales biomédicas por cámara y el rendimiento del propio juego. Un motor de triaje local cruza las señales contra la línea base personal del astronauta, consulta 18 protocolos NASA y responde con un color y tres acciones — todo a bordo, sin internet, sin transmitir ni un byte.
+Copiloto de salud invisible para astronautas: un juego de cartas de 30 segundos que, mientras se juega, captura 12 señales biomédicas por cámara y el rendimiento del propio juego. Un motor de triaje local cruza las señales contra la línea base personal del astronauta, consulta 18 protocolos NASA y responde con un color y tres acciones — todo a bordo, sin internet, sin transmitir ni un byte.
 
 ## License
 

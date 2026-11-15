@@ -1,12 +1,12 @@
 /* Reto neuro de cartas — Hubzy Astro-Triage (corazón de Hubzi).
- * 60 s de asociación rápida: se muestra una SEÑAL OBJETIVO y 4 cartas;
+ * 30 s de asociación rápida: se muestra una SEÑAL OBJETIVO y 4 cartas;
  * el tripulante pulsa la carta idéntica (o "NINGUNA"). Por detrás se mide
  * latencia de respuesta (ms), lapsus >500 ms (criterio PVT) y tasa de error.
  * La línea basal individual se guarda en localStorage entre sesiones.
  */
 
 const Game = (() => {
-  const DURATION_S = 60;
+  const DURATION_S = 30;
   const N_OPTIONS = 4;
   const PVT_LAPSE_MS = 500;
   // Emojis temáticos: inconfundibles entre sí aunque el tripulante esté cansado
