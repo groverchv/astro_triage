@@ -62,6 +62,7 @@ class AssessmentRequest(BaseModel):
     hr_baseline_bpm: float | None = None
     notes: str = ""
     psych_answers: list[str] = []
+    lang: str = "es"
 
 
 @app.get("/api/status")
@@ -87,7 +88,7 @@ def assessment(req: AssessmentRequest):
     m = Metrics(**req.model_dump())
     assessment = evaluate(m)
     sources = retriever.search(assessment["rag_query"], top_k=3)
-    card = narrate(assessment, sources)
+    card = narrate(assessment, sources, lang=req.lang)
     return {
         **{k: v for k, v in assessment.items() if k != "rag_query"},
         "action_card": card["text"],

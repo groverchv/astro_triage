@@ -23,6 +23,12 @@ _LEVEL_ES = {
     "AMBAR": "ÁMBAR — contramedidas activas",
     "ROJO": "ROJO — emergencia a bordo",
 }
+_LEVEL_EN = {
+    "NOMINAL": "NOMINAL",
+    "VERDE": "GREEN — monitor",
+    "AMBAR": "AMBER — active countermeasures",
+    "ROJO": "RED — onboard emergency",
+}
 
 
 def ollama_available() -> bool:
@@ -53,66 +59,96 @@ def _ollama_generate(prompt: str) -> str | None:
         return None
 
 
-def _template_card(assessment: dict, sources: list[dict]) -> str:
+def _template_card(assessment: dict, sources: list[dict], lang: str = "es") -> str:
     """Generador determinista: tarjeta en lenguaje claro, pasos accionables."""
     level = assessment["triage_level"]
     findings = assessment["findings"]
     composites = assessment["composites"]
+    en = lang == "en"
+    LEVEL = _LEVEL_EN if en else _LEVEL_ES
 
-    lines = [f"▸ VEREDICTO: {_LEVEL_ES.get(level, level)}", ""]
+    lines = [f"▸ {'VERDICT' if en else 'VEREDICTO'}: {LEVEL.get(level, level)}", ""]
 
     if not findings:
-        lines += [
-            "Todo normal — sigues en tu línea base.",
-            "",
-            "  1. Mantén tu plan de hoy tal cual.",
-            "  2. Repite el reto mañana a la misma hora.",
-        ]
+        lines += (
+            [
+                "All nominal — you're at your baseline.",
+                "",
+                "  1. Keep today's plan as is.",
+                "  2. Repeat the challenge tomorrow at the same time.",
+            ] if en else [
+                "Todo normal — sigues en tu línea base.",
+                "",
+                "  1. Mantén tu plan de hoy tal cual.",
+                "  2. Repite el reto mañana a la misma hora.",
+            ]
+        )
     else:
         if composites:
-            lines += [f"Patrón: {composites[0]}", ""]
+            lines += [f"{'Pattern' if en else 'Patrón'}: {composites[0]}", ""]
         steps = []
         for f in findings:
             s = f.get("step")
             if s and s not in steps:
                 steps.append(s)
         if not steps:
-            steps.append("Registra el evento y reevalúa en 12 h.")
-        lines.append("Haz esto:")
+            steps.append(
+                "Log the event and re-check in 12 h." if en else
+                "Registra el evento y reevalúa en 12 h."
+            )
+        lines.append("Do this:" if en else "Haz esto:")
         for i, s in enumerate(steps[:3], 1):
             lines.append(f"  {i}. {s}")
         if level == "ROJO":
-            lines += ["", "⚠ Avisa a otro tripulante y abre canal médico ahora."]
+            lines += ["", "⚠ Alert another crew member and open the medical channel now." if en
+                      else "⚠ Avisa a otro tripulante y abre canal médico ahora."]
         elif level == "AMBAR":
-            lines += ["", "⚠ Hoy sin EVA ni tareas críticas — reevalúa en 4 h."]
+            lines += ["", "⚠ No EVA or critical tasks today — re-check in 4 h." if en
+                      else "⚠ Hoy sin EVA ni tareas críticas — reevalúa en 4 h."]
 
-    lines += ["", "— IA local · no es diagnóstico médico"]
+    lines += ["", "— Local AI · not a medical diagnosis" if en
+              else "— IA local · no es diagnóstico médico"]
     return "\n".join(lines)
 
 
-def narrate(assessment: dict, sources: list[dict]) -> dict:
+def narrate(assessment: dict, sources: list[dict], lang: str = "es") -> dict:
     """Devuelve {'text': str, 'generated_by': 'ollama'|'template'}."""
+    lang = "en" if str(lang or "").lower().startswith("en") else "es"
     if ollama_available():
         findings_txt = "; ".join(
             f"{f['code']}: {f['detail']}" for f in assessment["findings"]
-        ) or "todos los dominios nominales"
+        ) or ("all domains nominal" if lang == "en" else "todos los dominios nominales")
         src_txt = "\n".join(
             f"- {s['payload']['id']} {s['payload']['title']}: {s['payload']['text'][:400]}"
             for s in sources[:3]
         )
         prompt = (
-            "Eres el copiloto médico autónomo de una nave en misión a Marte, sin "
-            "enlace con la Tierra. Genera una TARJETA DE ACCIÓN breve y directa en "
-            "español para el astronauta (máx. 200 palabras): nivel de triaje, "
-            "patrón detectado, y 3-4 contramedidas numeradas citando el protocolo. "
-            "Tono operativo, sin rodeos.\n\n"
-            f"Nivel: {assessment['triage_level']}\n"
-            f"Hallazgos: {findings_txt}\n"
-            f"Patrones: {'; '.join(assessment['composites']) or 'ninguno'}\n"
-            f"Protocolos relevantes:\n{src_txt}\n\n"
-            "TARJETA DE ACCIÓN:"
+            (
+                "You are the autonomous medical copilot of a ship on a Mars "
+                "mission, with no link to Earth. Generate a brief, direct "
+                "ACTION CARD in English for the astronaut (max. 200 words): "
+                "triage level, detected pattern, and 3-4 numbered "
+                "countermeasures citing the protocol. Operational tone, "
+                "no fluff.\n\n"
+                f"Level: {assessment['triage_level']}\n"
+                f"Findings: {findings_txt}\n"
+                f"Patterns: {'; '.join(assessment['composites']) or 'none'}\n"
+                f"Relevant protocols:\n{src_txt}\n\n"
+                "ACTION CARD:"
+            ) if lang == "en" else (
+                "Eres el copiloto médico autónomo de una nave en misión a Marte, sin "
+                "enlace con la Tierra. Genera una TARJETA DE ACCIÓN breve y directa en "
+                "español para el astronauta (máx. 200 palabras): nivel de triaje, "
+                "patrón detectado, y 3-4 contramedidas numeradas citando el protocolo. "
+                "Tono operativo, sin rodeos.\n\n"
+                f"Nivel: {assessment['triage_level']}\n"
+                f"Hallazgos: {findings_txt}\n"
+                f"Patrones: {'; '.join(assessment['composites']) or 'ninguno'}\n"
+                f"Protocolos relevantes:\n{src_txt}\n\n"
+                "TARJETA DE ACCIÓN:"
+            )
         )
         text = _ollama_generate(prompt)
         if text:
             return {"text": text, "generated_by": f"ollama/{OLLAMA_MODEL}"}
-    return {"text": _template_card(assessment, sources), "generated_by": "template-local"}
+    return {"text": _template_card(assessment, sources, lang), "generated_by": "template-local"}

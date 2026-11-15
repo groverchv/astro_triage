@@ -43,6 +43,22 @@ body {
   to   { background-position: 0 0, 0 0, 0 0, -520px 200px, -340px 140px, 0 0; }
 }
 
+/* ---------- selector de idioma ---------- */
+.lang-bar {
+  position: fixed; top: 14px; right: 14px; z-index: 50;
+  display: flex; gap: 4px;
+  background: #0c1320d9; border: 1px solid var(--line); border-radius: 6px;
+  padding: 3px; backdrop-filter: blur(4px);
+}
+.lang-btn {
+  font: 600 11px/1 var(--mono); letter-spacing: .12em;
+  color: var(--dim); background: transparent; border: 1px solid transparent;
+  border-radius: 4px; padding: 6px 10px; cursor: pointer;
+}
+.lang-btn.on {
+  color: #fff; background: #1e3a5f; border-color: #38bdf855;
+}
+
 /* ---------- layout ---------- */
 .console { max-width: 1150px; margin: 0 auto; padding: 18px; display: grid; gap: 18px; position: relative; z-index: 1; }
 .panel {

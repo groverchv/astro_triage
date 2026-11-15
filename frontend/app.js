@@ -19,13 +19,16 @@ async function fetchStatus() {
     const el = $("localProof");
     if (el) {
       el.classList.remove("hidden");
-      el.textContent = `⚡ Generado 100% a bordo — vector: ${s.vector_store} (${s.protocols_indexed} protocolos) · ` +
-        `llm: ${s.llm} · ${s.earth_link === "offline-autonomous" ? "sin enlace Tierra (T-20min)" : s.earth_link}`;
+      el.textContent = L(
+        `⚡ Generado 100% a bordo — vector: ${s.vector_store} (${s.protocols_indexed} protocolos) · ` +
+        `llm: ${s.llm} · ${s.earth_link === "offline-autonomous" ? "sin enlace Tierra (T-20min)" : s.earth_link}`,
+        `⚡ Generated 100% onboard — vector: ${s.vector_store} (${s.protocols_indexed} protocols) · ` +
+        `llm: ${s.llm} · ${s.earth_link === "offline-autonomous" ? "no Earth link (T-20min)" : s.earth_link}`);
     }
   } catch {
     AppState.sysinfo = null;
     const el = $("localProof");
-    if (el) { el.classList.remove("hidden"); el.textContent = "⚠ Backend sin respuesta"; }
+    if (el) { el.classList.remove("hidden"); el.textContent = L("⚠ Backend sin respuesta", "⚠ Backend not responding"); }
   }
 }
 
@@ -60,23 +63,42 @@ function typeText(el, text, done) {
   if (done) done();
 }
 
-const PSYCH_QUESTIONS = [
-  {
-    q: "¿Cómo te sientes hoy?",
-    key: "mood",
-    opts: [["Con energía", "ok"], ["Cansado", "bajo"], ["Muy bajo de ánimo", "malo"]],
-  },
-  {
-    q: "¿Cómo dormiste anoche?",
-    key: "sleep",
-    opts: [["Bien, dormí completo", "ok"], ["Me desperté varias veces", "regular"], ["Casi no dormí", "mal"]],
-  },
-  {
-    q: "Última: ¿cómo va tu ánimo con el equipo?",
-    key: "social",
-    opts: [["Bien, conectado", "ok"], ["Algo distante", "distante"], ["Me siento aislado", "aislado"]],
-  },
-];
+const PSYCH_QUESTIONS_ALL = {
+  es: [
+    {
+      q: "¿Cómo te sientes hoy?",
+      key: "mood",
+      opts: [["Con energía", "ok"], ["Cansado", "bajo"], ["Muy bajo de ánimo", "malo"]],
+    },
+    {
+      q: "¿Cómo dormiste anoche?",
+      key: "sleep",
+      opts: [["Bien, dormí completo", "ok"], ["Me desperté varias veces", "regular"], ["Casi no dormí", "mal"]],
+    },
+    {
+      q: "Última: ¿cómo va tu ánimo con el equipo?",
+      key: "social",
+      opts: [["Bien, conectado", "ok"], ["Algo distante", "distante"], ["Me siento aislado", "aislado"]],
+    },
+  ],
+  en: [
+    {
+      q: "How do you feel today?",
+      key: "mood",
+      opts: [["Energetic", "ok"], ["Tired", "bajo"], ["Very low spirits", "malo"]],
+    },
+    {
+      q: "How did you sleep last night?",
+      key: "sleep",
+      opts: [["Well, full night", "ok"], ["Woke up several times", "regular"], ["Barely slept", "mal"]],
+    },
+    {
+      q: "Last one: how's your morale with the crew?",
+      key: "social",
+      opts: [["Good, connected", "ok"], ["A bit distant", "distante"], ["I feel isolated", "aislado"]],
+    },
+  ],
+};
 
 function showHubzyCheckin(onDone) {
   const modal = $("hubzyModal");
@@ -84,6 +106,7 @@ function showHubzyCheckin(onDone) {
   AppState.psych_answers = [];
   modal.classList.remove("hidden");
   const txt = $("npcText"), ans = $("npcAnswers");
+  const PSYCH_QUESTIONS = PSYCH_QUESTIONS_ALL[Lang.get()] || PSYCH_QUESTIONS_ALL.es;
   let qi = 0;
 
   function ask() {
@@ -105,7 +128,8 @@ function showHubzyCheckin(onDone) {
   }
   function close_() {
     ans.innerHTML = "";
-    typeText(txt, "Anotado, comandante. Generando tu veredicto con esto en cuenta…", () => {
+    typeText(txt, L("Anotado, comandante. Generando tu veredicto con esto en cuenta…",
+                    "Noted, commander. Generating your verdict with this in mind…"), () => {
       setTimeout(() => { modal.classList.add("hidden"); if (onDone) onDone(); }, 1000);
     });
   }
@@ -119,13 +143,14 @@ function startBreathing() {
         phase = $("breathPhase"), count = $("breathCount");
   if (!modal) return;
   modal.classList.remove("hidden");
-  const phases = [["INHALA", 4, 1.5], ["SOSTÉN", 7, 1.5], ["EXHALA", 8, 1]];
+  const HOLD = L("SOSTÉN", "HOLD");
+  const phases = [[L("INHALA", "INHALE"), 4, 1.5], [HOLD, 7, 1.5], [L("EXHALA", "EXHALE"), 8, 1]];
   let i = 0, cycles = 0;
   function run() {
     if (modal.classList.contains("hidden")) return;
     const [name, secs, scale] = phases[i % 3];
     phase.textContent = name;
-    circ.style.transition = `transform ${name === "SOSTÉN" ? 0.5 : secs}s ease-in-out`;
+    circ.style.transition = `transform ${name === HOLD ? 0.5 : secs}s ease-in-out`;
     circ.style.transform = `scale(${scale})`;
     let left = secs;
     count.textContent = left;
@@ -135,7 +160,7 @@ function startBreathing() {
         clearInterval(breathTimer);
         if (name === "EXHALA") {
           if (++cycles >= 3) {
-            phase.textContent = "LISTO"; count.textContent = "✓";
+            phase.textContent = L("LISTO", "DONE"); count.textContent = "✓";
             circ.style.transform = "scale(1)"; return;
           }
         }
@@ -160,88 +185,113 @@ function buildSignals() {
   const hrManual = parseFloat($("hrInput")?.value);
   const hrBase = 68;
   const out = [];
+  const NA = L("sin lectura", "no reading");
+  const BPS = L("basal 12-20/min", "baseline 12-20/min");
 
   // 👁 Parpadeo (+ PERCLOS y duración en el sub)
-  if (bio.blink_rate == null) out.push(sig("👁", "PARPADEO", "—", "sin lectura", CLS.na, "basal 12-20/min"));
+  if (bio.blink_rate == null) out.push(sig("👁", L("PARPADEO", "BLINKING"), "—", NA, CLS.na, BPS));
   else {
     const v = bio.blink_rate;
-    const [st, cls] = v >= 12 ? ["normal", CLS.ok] : v >= 8 ? ["algo bajo — fatiga", CLS.warn] : ["muy bajo — fatiga ocular", CLS.bad];
+    const [st, cls] = v >= 12 ? [L("normal", "normal"), CLS.ok]
+      : v >= 8 ? [L("algo bajo — fatiga", "somewhat low — fatigue"), CLS.warn]
+      : [L("muy bajo — fatiga ocular", "very low — eye fatigue"), CLS.bad];
     const extra = [
-      bio.perclos != null ? `ojos cerrados ${Math.round(bio.perclos * 100)}% del tiempo` : null,
-      bio.blink_duration_ms ? `parpadeo ${bio.blink_duration_ms} ms` : null,
-      bio.sclera_redness != null && bio.sclera_redness > 0.3 ? `enrojecidos` : null,
+      bio.perclos != null ? L(`ojos cerrados ${Math.round(bio.perclos * 100)}% del tiempo`,
+        `eyes closed ${Math.round(bio.perclos * 100)}% of the time`) : null,
+      bio.blink_duration_ms ? L(`parpadeo ${bio.blink_duration_ms} ms`,
+        `blink ${bio.blink_duration_ms} ms`) : null,
+      bio.sclera_redness != null && bio.sclera_redness > 0.3 ? L("enrojecidos", "reddened") : null,
     ].filter(Boolean).join(" · ");
-    out.push(sig("👁", "PARPADEO", `${Math.round(v)}/min`, st, cls, extra || "basal 12-20/min"));
+    out.push(sig("👁", L("PARPADEO", "BLINKING"), `${Math.round(v)}/min`, st, cls, extra || BPS));
   }
 
   // 😴 Somnolencia: bostezos + PERCLOS alto
   if (bio.yawn_count == null && bio.perclos == null)
-    out.push(sig("😴", "SOMNOLENCIA", "—", "sin lectura", CLS.na, "bostezos · ojos cerrados"));
+    out.push(sig("😴", L("SOMNOLENCIA", "DROWSINESS"), "—", NA, CLS.na, L("bostezos · ojos cerrados", "yawns · eyes closed")));
   else {
     const y = bio.yawn_count || 0, pc = bio.perclos || 0;
-    const [st, cls] = (y >= 4 || pc > 0.25) ? ["sueño severo", CLS.bad]
-      : (y >= 2 || pc > 0.15) ? ["sueño acumulado", CLS.warn]
-      : (y >= 1 || pc > 0.08) ? ["algo de sueño", CLS.ok]
-      : ["despierto", CLS.ok];
-    const val = `${y} bostezo${y === 1 ? "" : "s"} · ojos cerrados ${Math.round(pc * 100)}%`;
-    out.push(sig("😴", "SOMNOLENCIA", val, st, cls, "PERCLOS + MAR"));
+    const [st, cls] = (y >= 4 || pc > 0.25) ? [L("sueño severo", "severe drowsiness"), CLS.bad]
+      : (y >= 2 || pc > 0.15) ? [L("sueño acumulado", "built-up sleep debt"), CLS.warn]
+      : (y >= 1 || pc > 0.08) ? [L("algo de sueño", "mildly drowsy"), CLS.ok]
+      : [L("despierto", "awake"), CLS.ok];
+    const val = L(
+      `${y} bostezo${y === 1 ? "" : "s"} · ojos cerrados ${Math.round(pc * 100)}%`,
+      `${y} yawn${y === 1 ? "" : "s"} · eyes closed ${Math.round(pc * 100)}%`);
+    out.push(sig("😴", L("SOMNOLENCIA", "DROWSINESS"), val, st, cls, "PERCLOS + MAR"));
   }
 
   // 🙂 Simetría facial (+ asimetría ocular L-R)
   const asymV = bio.facial_asymmetry, earV = bio.ear_asymmetry;
-  if (asymV == null) out.push(sig("🙂", "SIMETRÍA FACIAL", "—", "sin lectura", CLS.na, "alerta neuro temprana"));
+  if (asymV == null) out.push(sig("🙂", L("SIMETRÍA FACIAL", "FACIAL SYMMETRY"), "—", NA, CLS.na, L("alerta neuro temprana", "early neuro alert")));
   else {
     const v = Math.max(asymV, (earV || 0) * 0.8); // la peor de ambas
-    const [st, cls] = v < 0.12 ? ["simétrica", CLS.ok] : v < 0.18 ? ["leve asimetría", CLS.warn] : ["asimetría marcada — revisar", CLS.bad];
-    out.push(sig("🙂", "SIMETRÍA FACIAL", v.toFixed(2), st, cls, "rostro + diferencia de ojos"));
+    const [st, cls] = v < 0.12 ? [L("simétrica", "symmetric"), CLS.ok]
+      : v < 0.18 ? [L("leve asimetría", "slight asymmetry"), CLS.warn]
+      : [L("asimetría marcada — revisar", "marked asymmetry — check"), CLS.bad];
+    out.push(sig("🙂", L("SIMETRÍA FACIAL", "FACIAL SYMMETRY"), v.toFixed(2), st, cls, L("rostro + diferencia de ojos", "face + eye difference")));
   }
 
   // 👀 Atención visual (iris fuera de centro)
-  if (bio.gaze_away_pct == null) out.push(sig("👀", "ATENCIÓN VISUAL", "—", "sin lectura", CLS.na, "mirada fuera de la tarea"));
+  if (bio.gaze_away_pct == null) out.push(sig("👀", L("ATENCIÓN VISUAL", "VISUAL FOCUS"), "—", NA, CLS.na, L("mirada fuera de la tarea", "gaze off task")));
   else {
     const v = bio.gaze_away_pct;
-    const [st, cls] = v <= 0.4 ? ["enfocado", CLS.ok] : v <= 0.55 ? ["algo distraído", CLS.warn] : ["muy distraído", CLS.bad];
-    out.push(sig("👀", "ATENCIÓN VISUAL", `${Math.round((1 - v) * 100)}%`, st, cls, "mirando la tarea"));
+    const [st, cls] = v <= 0.4 ? [L("enfocado", "focused"), CLS.ok]
+      : v <= 0.55 ? [L("algo distraído", "somewhat distracted"), CLS.warn]
+      : [L("muy distraído", "very distracted"), CLS.bad];
+    out.push(sig("👀", L("ATENCIÓN VISUAL", "VISUAL FOCUS"), `${Math.round((1 - v) * 100)}%`, st, cls, L("mirando la tarea", "watching the task")));
   }
 
   // 😖 Tensión facial (ceño fruncido / párpados cargados)
-  if (bio.face_tension == null) out.push(sig("😖", "TENSIÓN FACIAL", "—", "sin lectura", CLS.na, "estrés o dolor en el rostro"));
+  if (bio.face_tension == null) out.push(sig("😖", L("TENSIÓN FACIAL", "FACE TENSION"), "—", NA, CLS.na, L("estrés o dolor en el rostro", "stress or pain in the face")));
   else {
     const v = bio.face_tension;
-    const [st, cls] = v <= 0.45 ? ["relajada", CLS.ok] : v <= 0.6 ? ["algo tensa", CLS.warn] : ["muy tensa — estrés/dolor", CLS.bad];
-    out.push(sig("😖", "TENSIÓN FACIAL", `${Math.round(v * 100)}%`, st, cls, "ceño + párpados"));
+    const [st, cls] = v <= 0.45 ? [L("relajada", "relaxed"), CLS.ok]
+      : v <= 0.6 ? [L("algo tensa", "somewhat tense"), CLS.warn]
+      : [L("muy tensa — estrés/dolor", "very tense — stress/pain"), CLS.bad];
+    out.push(sig("😖", L("TENSIÓN FACIAL", "FACE TENSION"), `${Math.round(v * 100)}%`, st, cls, L("ceño + párpados", "brow + eyelids")));
   }
 
-  if (bio.head_sway == null) out.push(sig("🧍", "ESTABILIDAD", "—", "sin lectura", CLS.na, "temblor cuello/cabeza"));
+  if (bio.head_sway == null) out.push(sig("🧍", L("ESTABILIDAD", "STABILITY"), "—", NA, CLS.na, L("temblor cuello/cabeza", "neck/head sway")));
   else {
     const stab = Math.round((1 - bio.head_sway) * 100);
-    const [st, cls] = bio.head_sway < 0.25 ? ["estable", CLS.ok] : bio.head_sway < 0.4 ? ["balanceo leve", CLS.warn] : ["inestable — vestibular", CLS.bad];
-    out.push(sig("🧍", "ESTABILIDAD", `${stab}%`, st, cls, "temblor cuello/cabeza"));
+    const [st, cls] = bio.head_sway < 0.25 ? [L("estable", "stable"), CLS.ok]
+      : bio.head_sway < 0.4 ? [L("balanceo leve", "slight sway"), CLS.warn]
+      : [L("inestable — vestibular", "unstable — vestibular"), CLS.bad];
+    out.push(sig("🧍", L("ESTABILIDAD", "STABILITY"), `${stab}%`, st, cls, L("temblor cuello/cabeza", "neck/head sway")));
   }
 
-  if (g.latency_delta_pct == null) out.push(sig("⚡", "VELOCIDAD MENTAL", "—", "sin jugar", CLS.na, "latencia vs tu basal"));
+  if (g.latency_delta_pct == null) out.push(sig("⚡", L("VELOCIDAD MENTAL", "MENTAL SPEED"), "—", L("sin jugar", "no game"), CLS.na, L("latencia vs tu basal", "latency vs your baseline")));
   else {
     const d = g.latency_delta_pct;
-    const [st, cls] = d <= 10 ? ["como tu basal", CLS.ok] : d <= 15 ? ["algo más lenta", CLS.warn] : [`+${Math.round(d)}% — enlentecida`, CLS.bad];
-    out.push(sig("⚡", "VELOCIDAD MENTAL", `${g.mean_latency_ms} ms`, st, cls, `${g.lapse_count || 0} lapsus >500 ms`));
+    const [st, cls] = d <= 10 ? [L("como tu basal", "at your baseline"), CLS.ok]
+      : d <= 15 ? [L("algo más lenta", "somewhat slower"), CLS.warn]
+      : [`+${Math.round(d)}% — ${L("enlentecida", "slowed")}`, CLS.bad];
+    out.push(sig("⚡", L("VELOCIDAD MENTAL", "MENTAL SPEED"), `${g.mean_latency_ms} ms`, st, cls,
+      `${g.lapse_count || 0} ${L("lapsus", "lapses")} >500 ms`));
   }
 
-  if (g.error_rate == null) out.push(sig("🎯", "PRECISIÓN", "—", "sin jugar", CLS.na, "aciertos en el reto"));
+  if (g.error_rate == null) out.push(sig("🎯", L("PRECISIÓN", "ACCURACY"), "—", L("sin jugar", "no game"), CLS.na, L("aciertos en el reto", "hits in the challenge")));
   else {
     const acc = Math.round((1 - g.error_rate) * 100);
-    const [st, cls] = g.error_rate <= 0.18 ? ["precisa", CLS.ok] : g.error_rate <= 0.30 ? ["con errores", CLS.warn] : ["errores elevados", CLS.bad];
-    out.push(sig("🎯", "PRECISIÓN", `${acc}%`, st, cls, `${g.trials || 0} ensayos`));
+    const [st, cls] = g.error_rate <= 0.18 ? [L("precisa", "accurate"), CLS.ok]
+      : g.error_rate <= 0.30 ? [L("con errores", "with errors"), CLS.warn]
+      : [L("errores elevados", "high error count"), CLS.bad];
+    out.push(sig("🎯", L("PRECISIÓN", "ACCURACY"), `${acc}%`, st, cls, `${g.trials || 0} ${L("ensayos", "trials")}`));
   }
 
   // ❤️ Pulso: rPPG de cámara si hay señal, si no el manual (+ HRV en el sub)
   const hr = bio.rppg_hr ?? (Number.isFinite(hrManual) ? hrManual : null);
-  const hrvTxt = bio.hrv_rmssd_ms ? ` · variabilidad ${bio.hrv_rmssd_ms} ms${bio.hrv_rmssd_ms < 25 ? " (baja)" : ""}` : "";
-  const hrSrc = (bio.rppg_hr ? "estimado por cámara (rPPG)" : "manual/wearable") + hrvTxt;
-  if (hr == null) out.push(sig("❤️", "PULSO", "—", "sin dato", CLS.na, `basal ${hrBase} lpm`));
+  const hrvTxt = bio.hrv_rmssd_ms ? L(
+    ` · variabilidad ${bio.hrv_rmssd_ms} ms${bio.hrv_rmssd_ms < 25 ? " (baja)" : ""}`,
+    ` · variability ${bio.hrv_rmssd_ms} ms${bio.hrv_rmssd_ms < 25 ? " (low)" : ""}`) : "";
+  const hrSrc = (bio.rppg_hr ? L("estimado por cámara (rPPG)", "camera-estimated (rPPG)") : "manual/wearable") + hrvTxt;
+  if (hr == null) out.push(sig("❤️", L("PULSO", "PULSE"), "—", L("sin dato", "no data"), CLS.na, L(`basal ${hrBase} lpm`, `baseline ${hrBase} bpm`)));
   else {
     const d = (hr - hrBase) / hrBase * 100;
-    const [st, cls] = Math.abs(d) <= 10 ? ["normal", CLS.ok] : d > 10 ? [`+${Math.round(d)}% — elevado`, d > 20 ? CLS.bad : CLS.warn] : [`${Math.round(d)}% — bajo`, CLS.warn];
-    out.push(sig("❤️", "PULSO", `${hr} lpm`, st, cls, hrSrc));
+    const [st, cls] = Math.abs(d) <= 10 ? [L("normal", "normal"), CLS.ok]
+      : d > 10 ? [`+${Math.round(d)}% — ${L("elevado", "elevated")}`, d > 20 ? CLS.bad : CLS.warn]
+      : [`${Math.round(d)}% — ${L("bajo", "low")}`, CLS.warn];
+    out.push(sig("❤️", L("PULSO", "PULSE"), `${hr} ${L("lpm", "bpm")}`, st, cls, hrSrc));
   }
 
   return out;
@@ -265,35 +315,55 @@ function renderSignals() {
   const rank = { ok: 0, na: 0, warn: 1, bad: 2 };
   const worst = signals.reduce((w, s) => rank[s.cls] > rank[w] ? s.cls : w, "ok");
   const phrases = {
-    ok: "Todas las señales dentro de tu rango nominal.",
-    warn: "Señales atenuadas detectadas — generando veredicto…",
-    bad: "Convergencia de señales anómalas — generando veredicto…",
-    na: "Sin datos de sesión registrados.",
+    ok: L("Todas las señales dentro de tu rango nominal.", "All signals within your nominal range."),
+    warn: L("Señales atenuadas detectadas — generando veredicto…", "Attenuated signals detected — generating verdict…"),
+    bad: L("Convergencia de señales anómalas — generando veredicto…", "Converging anomalous signals — generating verdict…"),
+    na: L("Sin datos de sesión registrados.", "No session data recorded."),
   };
   $("mascotPhrase").textContent = phrases[worst] || phrases.ok;
 
   const sim = (AppState.bio?._source === "simulated" || AppState.game?._source === "simulated");
-  $("sigSource").textContent = sim ? "[simulado]" : "[cámara + juego real]";
+  $("sigSource").textContent = sim ? L("[simulado]", "[simulated]") : L("[cámara + juego real]", "[camera + live game]");
   panel.classList.remove("hidden");
 }
 
 /* ---------- Veredicto ---------- */
-const VERDICT = {
-  NOMINAL: {
-    t: "✓ APTO", cls: "NOMINAL",
-    sub: "Operativo nominal — sin restricciones. Reevaluar en 24 h.",
+const VERDICT_ALL = {
+  es: {
+    NOMINAL: {
+      t: "✓ APTO", cls: "NOMINAL",
+      sub: "Operativo nominal — sin restricciones. Reevaluar en 24 h.",
+    },
+    VERDE: {
+      t: "✓ APTO — OBSERVACIÓN", cls: "VERDE",
+      sub: "Un dominio leve alterado — registrar y reevaluar en 12 h.",
+    },
+    AMBAR: {
+      t: "⚠ APTO CON RESTRICCIONES", cls: "AMBAR",
+      sub: "Contramedidas activas — fuera de tareas críticas (EVA, robótica, acoplamiento) hasta reevaluación en 4 h.",
+    },
+    ROJO: {
+      t: "⛔ NO APTO — EMERGENCIA A BORDO", cls: "ROJO",
+      sub: "Convergencia crítica de señales — el CMO toma control clínico. Canal médico prioritario.",
+    },
   },
-  VERDE: {
-    t: "✓ APTO — OBSERVACIÓN", cls: "VERDE",
-    sub: "Un dominio leve alterado — registrar y reevaluar en 12 h.",
-  },
-  AMBAR: {
-    t: "⚠ APTO CON RESTRICCIONES", cls: "AMBAR",
-    sub: "Contramedidas activas — fuera de tareas críticas (EVA, robótica, acoplamiento) hasta reevaluación en 4 h.",
-  },
-  ROJO: {
-    t: "⛔ NO APTO — EMERGENCIA A BORDO", cls: "ROJO",
-    sub: "Convergencia crítica de señales — el CMO toma control clínico. Canal médico prioritario.",
+  en: {
+    NOMINAL: {
+      t: "✓ FIT", cls: "NOMINAL",
+      sub: "Nominal — no restrictions. Re-check in 24 h.",
+    },
+    VERDE: {
+      t: "✓ FIT — MONITOR", cls: "VERDE",
+      sub: "One mild domain altered — log and re-check in 12 h.",
+    },
+    AMBAR: {
+      t: "⚠ FIT WITH RESTRICTIONS", cls: "AMBAR",
+      sub: "Active countermeasures — off critical tasks (EVA, robotics, docking) until re-check in 4 h.",
+    },
+    ROJO: {
+      t: "⛔ UNFIT — ONBOARD EMERGENCY", cls: "ROJO",
+      sub: "Critical signal convergence — the CMO takes clinical control. Priority medical channel.",
+    },
   },
 };
 
@@ -321,13 +391,14 @@ function collectMetrics() {
     hr_baseline_bpm: 68,
     notes: AppState.symptoms.size ? "sintomas: " + [...AppState.symptoms].join(", ") : "",
     psych_answers: AppState.psych_answers || [],
+    lang: Lang.get(),
   };
 }
 
 async function runTriage() {
   const btn = $("btnTriage");
   btn.disabled = true;
-  btn.textContent = "⬢ EVALUANDO CONVERGENCIA DE SEÑALES…";
+  btn.textContent = L("⬢ EVALUANDO CONVERGENCIA DE SEÑALES…", "⬢ EVALUATING SIGNAL CONVERGENCE…");
 
   let res;
   try {
@@ -339,12 +410,13 @@ async function runTriage() {
     res = await r.json();
   } catch (e) {
     btn.disabled = false;
-    btn.textContent = "⬢ GENERAR VEREDICTO";
-    alert("API no disponible: " + e.message);
+    btn.textContent = L("⬢ GENERAR VEREDICTO", "⬢ GENERATE VERDICT");
+    alert(L("API no disponible: ", "API unavailable: ") + e.message);
     return;
   }
 
   // Veredicto grande y claro
+  const VERDICT = VERDICT_ALL[Lang.get()] || VERDICT_ALL.es;
   const v = VERDICT[res.triage_level] || VERDICT.NOMINAL;
   const banner = $("verdictBanner");
   banner.className = "verdict-banner " + v.cls;
@@ -353,19 +425,29 @@ async function runTriage() {
 
   const fl = $("findingsList");
   fl.innerHTML = "";
-  const DOMAIN_ES = {
-    ocular: "ojos", neurologico: "neurológico", vestibular: "equilibrio",
-    psicomotor: "reflejos", cognitivo: "mente", cardiovascular: "corazón",
-    somnolencia: "sueño", muscular: "tensión",
-    psicologico: "salud mental", somatico: "cuerpo",
-  };
+  const DOMAIN = {
+    es: {
+      ocular: "ojos", neurologico: "neurológico", vestibular: "equilibrio",
+      psicomotor: "reflejos", cognitivo: "mente", cardiovascular: "corazón",
+      somnolencia: "sueño", muscular: "tensión",
+      psicologico: "salud mental", somatico: "cuerpo",
+    },
+    en: {
+      ocular: "eyes", neurologico: "neurological", vestibular: "balance",
+      psicomotor: "reflexes", cognitivo: "mind", cardiovascular: "heart",
+      somnolencia: "sleep", muscular: "tension",
+      psicologico: "mental health", somatico: "body",
+    },
+  }[Lang.get()] || {};
   if (!res.findings.length) {
-    fl.innerHTML = `<li style="border-color:#22c55e"><span class="sev" style="color:#22c55e">SIN ALERTAS</span>Todas las métricas dentro de tu línea base.</li>`;
+    fl.innerHTML = L(
+      `<li style="border-color:#22c55e"><span class="sev" style="color:#22c55e">SIN ALERTAS</span>Todas las métricas dentro de tu línea base.</li>`,
+      `<li style="border-color:#22c55e"><span class="sev" style="color:#22c55e">NO ALERTS</span>All metrics within your baseline.</li>`);
   }
   for (const f of res.findings) {
     const li = document.createElement("li");
     li.style.borderColor = f.color;
-    li.innerHTML = `<span class="sev" style="color:${f.color}">${f.severity_label} · ${(DOMAIN_ES[f.domain] || f.domain).toUpperCase()}</span>${f.plain || f.detail}`;
+    li.innerHTML = `<span class="sev" style="color:${f.color}">${f.severity_label} · ${(DOMAIN[f.domain] || f.domain).toUpperCase()}</span>${f.plain || f.detail}`;
     fl.appendChild(li);
   }
 
@@ -398,7 +480,7 @@ async function runTriage() {
   renderTrend(res.triage_level);
   $("verdictBanner").scrollIntoView({ behavior: "smooth", block: "center" });
   btn.disabled = false;
-  btn.textContent = "⬢ RE-EVALUAR";
+  btn.textContent = L("⬢ RE-EVALUAR", "⬢ RE-EVALUATE");
 }
 
 /* ---------- Tendencia histórica (línea basal individual = estándar NASA) ---------- */
@@ -433,7 +515,7 @@ function speakVerdict() {
   if (!("speechSynthesis" in window)) return;
   const t = `${$("verdictTitle").textContent}. ${$("verdictSub").textContent}. ${$("actionCard").textContent.slice(0, 400)}`;
   const u = new SpeechSynthesisUtterance(t);
-  u.lang = "es-ES";
+  u.lang = Lang.get() === "en" ? "en-US" : "es-ES";
   u.rate = 1.0;
   speechSynthesis.cancel();
   speechSynthesis.speak(u);

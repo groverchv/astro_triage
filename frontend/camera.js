@@ -344,7 +344,8 @@ const Bio = (() => {
 
     if (!state.mediapipeOk) {
       msg.classList.remove("hidden");
-      msg.textContent = "Sensores no disponibles (offline) — se usarán valores simulados.";
+      msg.textContent = L("Sensores no disponibles (offline) — se usarán valores simulados.",
+                          "Sensors unavailable (offline) — simulated values will be used.");
       return false;
     }
     // init una sola vez (MediaPipe tarda ~9 s la primera vez);
@@ -354,7 +355,7 @@ const Bio = (() => {
         try {
           if (!faceMesh) {
             msg.classList.remove("hidden");
-            msg.textContent = "Encendiendo la cámara…";
+            msg.textContent = L("Encendiendo la cámara…", "Powering up camera…");
             faceMesh = new FaceMesh({
               locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`,
             });
@@ -379,7 +380,8 @@ const Bio = (() => {
           return true;
         } catch (e) {
           msg.classList.remove("hidden");
-          msg.textContent = "Cámara no disponible — se usarán valores simulados.";
+          msg.textContent = L("Cámara no disponible — se usarán valores simulados.",
+                              "Camera unavailable — simulated values will be used.");
           return false;
         }
       })();
@@ -398,7 +400,7 @@ const Bio = (() => {
     const msg = document.getElementById("camMsg");
     if (state.sawFace) {
       msg.classList.remove("hidden");
-      msg.textContent = "✓ Captura completada";
+      msg.textContent = L("✓ Captura completada", "✓ Capture complete");
     }
     return metrics();
   }

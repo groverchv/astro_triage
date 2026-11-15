@@ -19,6 +19,13 @@ SEVERITY_LABEL = {
     "warning": "ALERTA",
     "critical": "CRÍTICO",
 }
+SEVERITY_LABEL_EN = {
+    "nominal": "NOMINAL",
+    "advisory": "ADVISORY",
+    "caution": "CAUTION",
+    "warning": "WARNING",
+    "critical": "CRITICAL",
+}
 SEVERITY_COLOR = {
     "nominal": "#22c55e",
     "advisory": "#84cc16",
@@ -51,6 +58,7 @@ class Metrics:
     hr_baseline_bpm: float | None = None
     notes: str = ""
     psych_answers: list[str] = field(default_factory=list)  # ["mood:bajo", ...] del check-in NPC
+    lang: str = "es"                                       # idioma de salida: "es" | "en"
 
 
 @dataclass
@@ -142,6 +150,86 @@ PLAIN = {
     },
 }
 
+# Versión en inglés de PLAIN — mismo esquema code -> {plain, step}
+PLAIN_EN = {
+    "EYE-FATIGUE": {
+        "plain": "You're blinking far less than normal — your eyes show fatigue.",
+        "step": "Rest your eyes: every 20 min look far away for 20 seconds and blink firmly. If dry, use the artificial tears in the kit.",
+    },
+    "NEURO-FACIAL": {
+        "plain": "There's a difference between the two sides of your face that wasn't there before.",
+        "step": "STOP EVERYTHING. FAST exam with another crew member (smile, raise both arms 10 s, repeat a sentence) and open the priority medical channel now.",
+    },
+    "VEST-INSTAB": {
+        "plain": "Your head was moving more than usual — possible dizziness or imbalance.",
+        "step": "Move your head slowly and fix your gaze on a stable point before moving. Hydrate with electrolytes.",
+    },
+    "PSYCHOMOTOR-SLOW": {
+        "plain": "You responded slower than your usual pace.",
+        "step": "Take a 20-min nap before your next task. No EVA, robotics or docking until re-evaluation.",
+    },
+    "PVT-LAPSES": {
+        "plain": "You zoned out several times — responses over half a second.",
+        "step": "Sleep-deprivation sign: protect your next 8 h rest window and avoid caffeine in the 8 h before it.",
+    },
+    "COG-ERRORS": {
+        "plain": "You missed more cards than usual — your accuracy dropped.",
+        "step": "Check the module ventilation (high CO2 does this) and how much you slept in the last 24 h.",
+    },
+    "CV-TACHY": {
+        "plain": "Your pulse is above your normal range.",
+        "step": "Drink 400-500 ml of water with electrolytes now and re-check your pulse in 45 min.",
+    },
+    "SLEEP-DROWSY": {
+        "plain": "Yawns and half-closed eyes — you're carrying serious sleep debt.",
+        "step": "Protect your next sleep window: 8 h blocked, dark module, no caffeine 8 h before.",
+    },
+    "EYE-LID": {
+        "plain": "Your blinks are longer than normal — heavy eyelids.",
+        "step": "Same as eye fatigue: rest your eyes and prioritize your next nap.",
+    },
+    "ATT-GAZE": {
+        "plain": "You were looking away from the screen much of the time — divided attention.",
+        "step": "Focus rule: 25-min distraction-free blocks. If it's fatigue and not module noise, take a short nap.",
+    },
+    "FACE-TENSION": {
+        "plain": "Your face shows tension — furrowed brow and heavy eyelids (stress or pain).",
+        "step": "Regulation pause: 4-7-8 breathing for 3 min. If there's localized pain, log it and report it.",
+    },
+    "CV-HRV": {
+        "plain": "Your heart-rate variability is low — your body isn't recovering from stress.",
+        "step": "Downshift today: light tasks, hydration, and prioritize the next sleep window.",
+    },
+    "EYE-RED": {
+        "plain": "Your eyes look red — irritation or eye fatigue.",
+        "step": "Use the artificial tears in the kit and check that the fan airflow isn't hitting your face.",
+    },
+    "PSYCH-MOOD": {
+        "plain": "You reported low spirits today.",
+        "step": "Note the reason in your flight journal, do 10 min of something you enjoy, and seek crew contact before sleep.",
+    },
+    "PSYCH-FATIGUE": {
+        "plain": "Sleep went badly — insufficient rest per your own report.",
+        "step": "Protect the next sleep window: 8 h blocked, dark module, no screens 30 min before.",
+    },
+    "PSYCH-ISOLATION": {
+        "plain": "You feel isolated from the crew — this matters as much as the physical.",
+        "step": "Talk with a crew member for 15 min today. If it persists a week, open the psych-support channel on the next link.",
+    },
+    "SYM-HEAD": {
+        "plain": "You reported a headache.",
+        "step": "Hydrate with 400 ml of water and check module CO2. If it's sudden and severe ('worst of your life'), call the medical channel now.",
+    },
+    "SYM-DIZZY": {
+        "plain": "You reported dizziness.",
+        "step": "Move your head slowly, fix your gaze on a stable point and take electrolytes. No EVA or docking today.",
+    },
+    "SYM-NAUSEA": {
+        "plain": "You reported nausea.",
+        "step": "Light, frequent meals; avoid strong smells and sudden head movements. If vomiting repeats, rehydrate with electrolytes.",
+    },
+}
+
 
 def _sev_ge(a: str, b: str) -> bool:
     return SEVERITY_ORDER[a] >= SEVERITY_ORDER[b]
@@ -149,6 +237,9 @@ def _sev_ge(a: str, b: str) -> bool:
 
 def evaluate(m: Metrics) -> dict:
     findings: list[Finding] = []
+    lang = "en" if str(m.lang or "").lower().startswith("en") else "es"
+    PL = PLAIN_EN if lang == "en" else PLAIN
+    SL = SEVERITY_LABEL_EN if lang == "en" else SEVERITY_LABEL
 
     # --- Dominio ocular -----------------------------------------------------
     blink_slow = False
@@ -504,20 +595,26 @@ def evaluate(m: Metrics) -> dict:
     if (blink_slow or drowsy) and motor_slow and cv_flag:
         composites.append(
             "Cansancio acumulado + posible deshidratación "
-            "(ojos cansados + reflejos lentos + pulso alto)"
+            "(ojos cansados + reflejos lentos + pulso alto)" if lang == "es" else
+            "Built-up fatigue + possible dehydration "
+            "(tired eyes + slow reflexes + high pulse)"
         )
     if motor_slow and cog_err:
         composites.append(
             "Mente más lenta y con más errores — revisar el aire del "
-            "módulo (CO2) o tu descanso antes de tareas críticas"
+            "módulo (CO2) o tu descanso antes de tareas críticas" if lang == "es" else
+            "Slower mind with more errors — check module air (CO2) "
+            "or your rest before critical tasks"
         )
     if postural and (cv_flag or cog_err):
         composites.append(
-            "Inestabilidad con efecto en tu cuerpo — riesgo de mareo o desmayo"
+            "Inestabilidad con efecto en tu cuerpo — riesgo de mareo o desmayo" if lang == "es" else
+            "Instability affecting your body — risk of dizziness or fainting"
         )
     if motor_slow and psych_neg:
         composites.append(
-            "Reflejos lentos + ánimo/descanso en bajo — posible fatiga mental severa o burnout"
+            "Reflejos lentos + ánimo/descanso en bajo — posible fatiga mental severa o burnout" if lang == "es" else
+            "Slow reflexes + low mood/rest — possible severe mental fatigue or burnout"
         )
 
     # --- Query de recuperación para el RAG -----------------------------------
@@ -539,11 +636,11 @@ def evaluate(m: Metrics) -> dict:
                 "code": f.code,
                 "domain": f.domain,
                 "severity": f.severity,
-                "severity_label": SEVERITY_LABEL[f.severity],
+                "severity_label": SL[f.severity],
                 "color": SEVERITY_COLOR[f.severity],
                 "detail": f.detail,
-                "plain": PLAIN.get(f.code, {}).get("plain", f.detail),
-                "step": PLAIN.get(f.code, {}).get("step", ""),
+                "plain": PL.get(f.code, {}).get("plain", f.detail),
+                "step": PL.get(f.code, {}).get("step", ""),
             }
             for f in sorted(findings, key=lambda x: -SEVERITY_ORDER[x.severity])
         ],

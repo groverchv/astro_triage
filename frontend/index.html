@@ -16,33 +16,37 @@
   <div class="asteroid ast2"></div>
   <div class="asteroid ast3"></div>
 </div>
+<div class="lang-bar">
+  <button class="lang-btn" data-lang="es" onclick="Lang.set('es')">ES</button>
+  <button class="lang-btn" data-lang="en" onclick="Lang.set('en')">EN</button>
+</div>
 <main class="console">
 
   <!-- ============ PASO 1 · RETO NEURO (check-in invisible) ============ -->
   <section class="panel" id="panelReto">
     <div class="panel-head">
-      <h2><span class="step-n">01</span> RETO DE REACCIÓN <span class="sub">sesión diaria de 60 segundos</span></h2>
+      <h2><span class="step-n">01</span> <span data-i18n="h.reto">RETO DE REACCIÓN</span> <span class="sub" data-i18n="sub.reto">sesión diaria de 60 segundos</span></h2>
     </div>
 
     <div class="reto-zone">
       <div class="game-col">
         <div class="stimulus-row">
           <div class="target-wrap">
-            <label>SEÑAL</label>
+            <label data-i18n="lbl.signal">SEÑAL</label>
             <div id="targetCard" class="card target"><span id="targetSym">?</span></div>
           </div>
           <div class="game-stats">
-            <div><label>PUNTOS</label><b id="gHits" class="ok-txt">0</b></div>
-            <div><label>RACHA</label><b id="gMs">×0</b></div>
-            <div><label>ERRORES</label><b id="gErr" class="err-txt">0</b></div>
-            <div><label>TIEMPO</label><b id="gTime">—</b></div>
+            <div><label data-i18n="lbl.points">PUNTOS</label><b id="gHits" class="ok-txt">0</b></div>
+            <div><label data-i18n="lbl.streak">RACHA</label><b id="gMs">×0</b></div>
+            <div><label data-i18n="lbl.errors">ERRORES</label><b id="gErr" class="err-txt">0</b></div>
+            <div><label data-i18n="lbl.time">TIEMPO</label><b id="gTime">—</b></div>
           </div>
         </div>
-        <p class="hint-line">Toca la carta igual a la <b>SEÑAL</b> — o <b>✕ NINGUNA</b> si no hay ninguna.</p>
+        <p class="hint-line" data-i18n="hint.rule">Toca la carta igual a la <b>SEÑAL</b> — o <b>✕ NINGUNA</b> si no hay ninguna.</p>
         <div id="cardGrid" class="card-grid"></div>
-        <p id="capyLine" class="capy-line">Listo. Pulsa JUGAR.</p>
+        <p id="capyLine" class="capy-line" data-i18n="game.ready">Listo. Pulsa JUGAR.</p>
         <div class="btn-row">
-          <button id="btnReto" class="btn primary big">▸ JUGAR · 60 s</button>
+          <button id="btnReto" class="btn primary big" data-i18n="btn.play">▸ JUGAR · 60 s</button>
         </div>
         <p id="baselineInfo" class="baseline-info"></p>
       </div>
@@ -53,9 +57,9 @@
           <canvas id="overlay"></canvas>
           <div id="blinkFlash" class="blink-flash hidden">👁 ×<b id="blinkCount">0</b></div>
           <div id="yawnFlash" class="yawn-flash hidden">😮 ×<b id="yawnCount">0</b></div>
-          <div id="camMsg" class="cam-msg small">Activando sensores…</div>
+          <div id="camMsg" class="cam-msg small" data-i18n="cam.msg">Activando sensores…</div>
         </div>
-        <p class="cam-note">Análisis 100 % local — nada se transmite fuera de la nave</p>
+        <p class="cam-note" data-i18n="cam.note">Análisis 100 % local — nada se transmite fuera de la nave</p>
       </div>
     </div>
   </section>
@@ -63,45 +67,45 @@
   <!-- ============ PASO 2 · SEÑALES ============ -->
   <section class="panel hidden" id="panelSenales">
     <div class="panel-head">
-      <h2><span class="step-n">02</span> ANÁLISIS DE LA SESIÓN <span id="sigSource" class="gen-by"></span></h2>
+      <h2><span class="step-n">02</span> <span data-i18n="h.signals">ANÁLISIS DE LA SESIÓN</span> <span id="sigSource" class="gen-by"></span></h2>
     </div>
-    <div class="mascot-line"><span id="mascotPhrase">Sesión analizada.</span></div>
+    <div class="mascot-line"><span id="mascotPhrase" data-i18n="sig.done">Sesión analizada.</span></div>
     <div class="sig-grid" id="sigGrid"></div>
     <div class="hr-row">
-      <label>RITMO CARDÍACO — entrada manual o wearable:</label>
-      <input id="hrInput" type="number" min="40" max="160" value="72" /> <span>lpm · basal 68</span>
+      <label data-i18n="hr.label">RITMO CARDÍACO — entrada manual o wearable:</label>
+      <input id="hrInput" type="number" min="40" max="160" value="72" /> <span data-i18n="hr.unit">lpm · basal 68</span>
     </div>
   </section>
 
   <!-- ============ PASO 3 · VEREDICTO ============ -->
   <section class="panel hidden" id="panelVeredicto">
     <div class="panel-head">
-      <h2><span class="step-n">03</span> VEREDICTO <span class="sub">triaje autónomo · RAG local sobre protocolos NASA</span></h2>
+      <h2><span class="step-n">03</span> <span data-i18n="h.verdict">VEREDICTO</span> <span class="sub" data-i18n="sub.verdict">triaje autónomo · RAG local sobre protocolos NASA</span></h2>
     </div>
     <div class="btn-row hidden" id="verdictBtnRow">
-      <button id="btnTriage" class="btn accent big">⬢ GENERAR VEREDICTO</button>
+      <button id="btnTriage" class="btn accent big" data-i18n="btn.triage">⬢ GENERAR VEREDICTO</button>
     </div>
     <div id="verdictOut" class="verdict-out hidden">
       <div id="verdictBanner" class="verdict-banner">
         <div id="verdictTitle" class="verdict-title"></div>
         <div id="verdictSub" class="verdict-sub"></div>
-        <button id="btnSpeak" class="btn ghost small speak-btn">🔊 ESCUCHAR VEREDICTO</button>
-        <button id="btnBreath" class="btn accent small breath-btn hidden">◉ CALIBRACIÓN 4-7-8</button>
+        <button id="btnSpeak" class="btn ghost small speak-btn" data-i18n="btn.speak">🔊 ESCUCHAR VEREDICTO</button>
+        <button id="btnBreath" class="btn accent small breath-btn hidden" data-i18n="btn.breath">◉ CALIBRACIÓN 4-7-8</button>
       </div>
       <div id="trendRow" class="trend-row hidden">
-        <label>TU TENDENCIA (vs tu propia basal — así lo mide la NASA):</label>
+        <label data-i18n="trend.label">TU TENDENCIA (vs tu propia basal — así lo mide la NASA):</label>
         <div id="trendBars" class="trend-bars"></div>
       </div>
       <div class="triage-cols">
         <div>
-          <h3>QUÉ DETECTAMOS</h3>
+          <h3 data-i18n="h.findings">QUÉ DETECTAMOS</h3>
           <ul id="findingsList" class="findings"></ul>
           <div id="composites" class="composites"></div>
         </div>
         <div>
-          <h3>QUÉ HACER <span id="genBy" class="gen-by"></span></h3>
+          <h3><span data-i18n="h.actions">QUÉ HACER</span> <span id="genBy" class="gen-by"></span></h3>
           <pre id="actionCard" class="action-card"></pre>
-          <h3>FUENTES RAG</h3>
+          <h3 data-i18n="h.sources">FUENTES RAG</h3>
           <ul id="sourcesList" class="sources"></ul>
           <p id="localProof" class="local-proof hidden"></p>
         </div>
@@ -113,7 +117,7 @@
   <div id="hubzyModal" class="modal-veil hidden">
     <div class="npc-box">
       <div class="npc-head">
-        <div><b>CHECK-IN</b><small>registro diario · privado</small></div>
+        <div><b>CHECK-IN</b><small data-i18n="checkin.sub">registro diario · privado</small></div>
       </div>
       <div id="npcText" class="npc-text"></div>
       <div id="npcAnswers" class="npc-answers"></div>
@@ -125,8 +129,8 @@
     <div class="breath-box">
       <div id="breathCircle" class="breath-circle"><span id="breathPhase">INHALA</span></div>
       <div id="breathCount" class="breath-count">4</div>
-      <p class="breath-hint">Respiración 4-7-8 · regulación autonómica <b>BHP-RES-4.7</b></p>
-      <button id="breathClose" class="btn ghost">CERRAR</button>
+      <p class="breath-hint" data-i18n="breath.hint">Respiración 4-7-8 · regulación autonómica <b>BHP-RES-4.7</b></p>
+      <button id="breathClose" class="btn ghost" data-i18n="breath.close">CERRAR</button>
     </div>
   </div>
 
@@ -135,6 +139,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="i18n.js"></script>
 <script src="camera.js"></script>
 <script src="game.js"></script>
 <script src="app.js"></script>

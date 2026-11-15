@@ -30,8 +30,10 @@ const Game = (() => {
 
   const $ = id => document.getElementById(id);
 
-  const PRAISE = ["Acierto.", "Preciso.", "Ritmo constante.", "Bien ejecutado."];
-  const OOPS = ["Incorrecto.", "Racha reiniciada.", "Fuera de marca."];
+  const PRAISE = () => L(["Acierto.", "Preciso.", "Ritmo constante.", "Bien ejecutado."],
+                         ["Hit.", "Precise.", "Steady rhythm.", "Well executed."]);
+  const OOPS = () => L(["Incorrecto.", "Racha reiniciada.", "Fuera de marca."],
+                       ["Miss.", "Streak reset.", "Off target."]);
 
   function capySay(msg) {
     const el = $("capyLine");
@@ -72,7 +74,7 @@ const Game = (() => {
     // Quinta carta: "NINGUNA" — misma talla que las demás
     const none = document.createElement("div");
     none.className = "card option none";
-    none.innerHTML = `<span class="none-x">✕</span><span class="none-txt">NINGUNA</span>`;
+    none.innerHTML = `<span class="none-x">✕</span><span class="none-txt">${L("NINGUNA", "NONE")}</span>`;
     none.onclick = () => answer(!state.hasMatch, none);
     grid.appendChild(none);
     state.shownTs = performance.now();
@@ -88,8 +90,8 @@ const Game = (() => {
       state.score += 10 + Math.min(state.streak, 10); // bonus por racha
       $("gHits").textContent = state.score;
       $("gMs").textContent = "×" + state.streak;
-      capySay(state.streak >= 10 ? "Racha destacada." :
-              state.streak >= 5 ? "Racha en curso." : pick(PRAISE));
+      capySay(state.streak >= 10 ? L("Racha destacada.", "Notable streak.") :
+              state.streak >= 5 ? L("Racha en curso.", "On a streak.") : pick(PRAISE()));
       if (cardEl) cardEl.classList.add("hit");
       setTimeout(newRound, 120);
     } else {
@@ -99,7 +101,7 @@ const Game = (() => {
       $("gErr").textContent = state.errors;
       $("gHits").textContent = state.score;
       $("gMs").textContent = "×0";
-      capySay(pick(OOPS));
+      capySay(pick(OOPS()));
       if (cardEl) cardEl.classList.add("miss");
       setTimeout(newRound, 220); // coste por error
     }
@@ -156,11 +158,14 @@ const Game = (() => {
     AppState.game = result;
     AppEvents.emit("game", result);
 
-    $("baselineInfo").textContent =
+    $("baselineInfo").textContent = L(
       `basal: ${base.toFixed(0)} ms · media sesión: ${mean.toFixed(0)} ms ` +
-      `(Δ ${deltaPct.toFixed(1)}%) · lapsus>500ms: ${lapses} · trials: ${n}`;
+      `(Δ ${deltaPct.toFixed(1)}%) · lapsus>500ms: ${lapses} · trials: ${n}`,
+      `baseline: ${base.toFixed(0)} ms · session mean: ${mean.toFixed(0)} ms ` +
+      `(Δ ${deltaPct.toFixed(1)}%) · lapses>500ms: ${lapses} · trials: ${n}`);
     $("targetSym").textContent = "✓";
-    capySay(`Sesión completada — ${state.score} puntos. Generando análisis…`);
+    capySay(L(`Sesión completada — ${state.score} puntos. Generando análisis…`,
+              `Session complete — ${state.score} points. Running analysis…`));
   }
 
   async function start() {
@@ -171,7 +176,7 @@ const Game = (() => {
     $("gHits").textContent = "0";
     $("gErr").textContent = "0";
     $("gMs").textContent = "×0";
-    capySay("Sesión en curso.");
+    capySay(L("Sesión en curso.", "Session running."));
     $("btnReto").disabled = true;
 
     // Check-in invisible: la cámara arranca en segundo plano — nunca bloquea el juego
@@ -205,9 +210,11 @@ const Game = (() => {
     AppState.game = result;
     Bio.simulate(); // también llena AppState.bio
     AppEvents.emit("game", result);
-    $("baselineInfo").textContent =
+    $("baselineInfo").textContent = L(
       `basal: ${base.toFixed(0)} ms · media: ${result.mean_latency_ms} ms ` +
-      `(Δ ${result.latency_delta_pct}%) · lapsus>500ms: ${result.lapse_count} · simulado`;
+      `(Δ ${result.latency_delta_pct}%) · lapsus>500ms: ${result.lapse_count} · simulado`,
+      `baseline: ${base.toFixed(0)} ms · mean: ${result.mean_latency_ms} ms ` +
+      `(Δ ${result.latency_delta_pct}%) · lapses>500ms: ${result.lapse_count} · simulated`);
   }
 
   return { start, simulate, DURATION_S };

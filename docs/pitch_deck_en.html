@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Astro-Triage — Deck EN</title>
+<style>
+  @page { size: A4 landscape; margin: 0; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Segoe UI",Arial,sans-serif; background:#050b14; color:#cfe6f5;
+         font-size:9.5pt; line-height:1.4; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .slide { page-break-after:always; width:297mm; height:210mm; padding:12mm 14mm 9mm;
+           display:flex; flex-direction:column; overflow:hidden; position:relative; }
+  .slide:last-child { page-break-after:auto; }
+
+  .topbar { display:flex; justify-content:space-between; align-items:center;
+            border-bottom:1px solid #12334d; padding-bottom:6px; margin-bottom:8mm; }
+  .topbar .l { color:#22d3ee; font-size:8pt; letter-spacing:3px; }
+  .topbar .r { color:#4b7ea0; font-size:7.5pt; letter-spacing:1px; }
+  .foot { margin-top:auto; padding-top:6px; border-top:1px solid #12334d;
+          color:#4b7ea0; font-size:7.5pt; letter-spacing:1px; display:flex; justify-content:space-between; }
+
+  h1 { font-size:38pt; font-weight:800; letter-spacing:2px; color:#fff; }
+  h1 em { font-style:normal; color:#22d3ee; }
+  .lede { font-size:12pt; color:#8fb8cf; }
+  h2 { font-size:14pt; color:#22d3ee; letter-spacing:2px; text-transform:uppercase;
+       border-left:3px solid #22d3ee; padding-left:10px; margin-bottom:7mm; }
+  h2 .sub { color:#4b7ea0; font-weight:400; letter-spacing:.5px; text-transform:none; font-size:9pt; }
+
+  .cards { display:grid; gap:10px; }
+  .cards.c3{grid-template-columns:repeat(3,1fr)} .cards.c4{grid-template-columns:repeat(4,1fr)}
+  .cards.c5{grid-template-columns:repeat(5,1fr)} .cards.c6{grid-template-columns:repeat(6,1fr)}
+  .c { border:1px solid #12334d; border-radius:8px; padding:11px 13px; background:#081120; }
+  .c.red{border-top:3px solid #ef4444} .c.cyan{border-top:3px solid #22d3ee}
+  .c.amber{border-top:3px solid #f59e0b} .c.green{border-top:3px solid #22c55e}
+  .c b { color:#fff; display:block; font-size:10pt; margin-bottom:3px; }
+  .c p { font-size:8.5pt; color:#7fa3bb; }
+  .c .n { font-size:19pt; font-weight:800; color:#fff; display:block; margin-bottom:2px; }
+
+  .dist { display:flex; align-items:center; gap:16px; border:1px solid #12334d;
+          border-radius:12px; padding:16px 20px; background:#081120; }
+  .planet { border-radius:50%; object-fit:cover; border:2px solid #12334d; }
+  .link { flex:1; position:relative; text-align:center; }
+  .link::before { content:""; position:absolute; top:50%; left:0; right:0; border-top:2px dashed #1d4a63; }
+  .link span { position:relative; background:#081120; padding:0 14px; font-weight:700; color:#fca5a5; font-size:13pt; }
+  .dist .cap { max-width:30%; font-size:9.5pt; color:#7fa3bb; }
+
+  .pipe { display:grid; grid-template-columns:1fr 30px 1fr 30px 1fr; gap:8px; align-items:stretch; }
+  .pbox { border:1px solid #1d4a63; border-radius:10px; background:#081120; padding:16px; text-align:center; }
+  .pbox b { color:#22d3ee; display:block; font-size:10pt; letter-spacing:1.5px; margin:6px 0 5px; }
+  .pbox p { font-size:8.5pt; color:#7fa3bb; }
+  .parr { display:flex; align-items:center; justify-content:center; color:#22d3ee; font-size:18pt; }
+
+  /* timeline horizontal */
+  .htl { display:grid; grid-template-columns:repeat(5,1fr); gap:0; margin-top:6mm; }
+  .hs { padding:0 14px; position:relative; }
+  .hs::before { content:""; position:absolute; top:8px; left:0; right:0; height:2px; background:#12334d; }
+  .hs:first-child::before { left:50%; } .hs:last-child::before { right:50%; }
+  .hs .dot { position:relative; width:16px; height:16px; border-radius:50%; background:#050b14;
+             border:3px solid #22d3ee; margin:0 auto 12px; }
+  .hs .t0 { text-align:center; font-family:Consolas,monospace; color:#22d3ee; font-size:8.5pt; }
+  .hs b { display:block; text-align:center; color:#fff; font-size:10pt; margin:4px 0; }
+  .hs p { text-align:center; font-size:8pt; color:#7fa3bb; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { border:1px solid #12334d; background:#081120; border-radius:8px;
+          padding:8px 14px; font-size:8.5pt; color:#cfe6f5; }
+  .chip b { color:#22d3ee; font-family:Consolas,monospace; font-weight:400; }
+
+  .gauges { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .g { text-align:center; border:1px solid #12334d; border-radius:10px; padding:12px; background:#081120; }
+  .g b { display:block; font-size:10.5pt; letter-spacing:1px; margin-top:4px; }
+  .g span { font-size:8pt; color:#7fa3bb; }
+
+  .vmock { border:1.5px solid #ef4444; border-radius:10px; background:#081120; overflow:hidden; }
+  .vmock .vh { background:rgba(239,68,68,.15); padding:9px 16px; border-bottom:1px solid #ef4444; }
+  .vmock .vh b { color:#fca5a5; font-size:11.5pt; letter-spacing:1px; }
+  .vmock .vb { padding:11px 16px; font-size:9pt; color:#cfe6f5; }
+  .vmock .vb ol { margin-left:18px; } .vmock .vb li { padding:2px 0; }
+
+  .tele { width:100%; border-collapse:collapse; }
+  .tele td { border-bottom:1px solid #0e2438; padding:6px 10px; font-size:8.5pt; vertical-align:top; }
+  .tele td:first-child { color:#22d3ee; font-family:Consolas,monospace; white-space:nowrap; }
+  .tele td:last-child { color:#9fc3d8; }
+
+  .transcript { border:1px solid #12334d; border-radius:10px; background:#081120; padding:14px 18px; }
+  .transcript .line { font-family:Consolas,monospace; font-size:9.5pt; margin-bottom:8px; }
+  .transcript .who { color:#22d3ee; }
+
+  .big { font-size:24pt; font-weight:800; color:#fff; line-height:1.25; }
+  .big em { font-style:normal; color:#22d3ee; }
+  .shot { width:100%; border:1px solid #1d4a63; border-radius:10px; display:block; }
+  .callout { border:1px solid #b45309; background:rgba(180,83,9,.12); border-radius:8px;
+             padding:10px 14px; font-size:9.5pt; color:#fcd9a8; }
+  .callout.cy { border-color:#155e75; background:rgba(34,211,238,.07); color:#a8e6f5; }
+  .moonbg { position:absolute; right:-30px; bottom:-40px; width:300px; opacity:.14; border-radius:50%; }
+</style>
+</head>
+<body>
+
+<!-- ============ SLIDE 1 · COVER ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">ASTRO-TRIAGE // DOSSIER</span><span class="r">NASA SPACE APPS 2026</span></div>
+  <img class="moonbg" src="../frontend/assets/moon.jpg" alt="">
+  <div style="margin-top:14mm;max-width:70%">
+    <div style="color:#22d3ee;font-size:9pt;letter-spacing:3px;margin-bottom:8mm">CHALLENGE · ASTRONAUT HEALTH MONITORING</div>
+    <h1>ASTRO<em>-TRIAGE</em></h1>
+    <p class="lede" style="margin-top:8mm">The astronaut doesn't take an exam.<br><b style="color:#fff">They play 60 seconds</b> — the ship assesses their health on its own.</p>
+    <div style="display:flex;gap:10px;margin-top:14mm;flex-wrap:wrap">
+      <span style="border:1px solid #155e75;border-radius:20px;padding:6px 16px;font-size:8.5pt;color:#8fd8ea">100% ONBOARD</span>
+      <span style="border:1px solid #155e75;border-radius:20px;padding:6px 16px;font-size:8.5pt;color:#8fd8ea">NO INTERNET</span>
+      <span style="border:1px solid #155e75;border-radius:20px;padding:6px 16px;font-size:8.5pt;color:#8fd8ea">18 NASA PROTOCOLS</span>
+      <span style="border:1px solid #155e75;border-radius:20px;padding:6px 16px;font-size:8.5pt;color:#8fd8ea">ZERO USAGE FATIGUE</span>
+    </div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>01 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 2 · PROBLEM ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">01 // THE THREAT</span><span class="r">CONTEXT</span></div>
+  <h2>The nearest doctor is <span class="sub">too far away</span></h2>
+  <div class="dist">
+    <img class="planet" src="../frontend/assets/earth.jpg" style="width:90px;height:90px" alt="">
+    <div class="link"><span>≈ 20 min of silence</span></div>
+    <img class="planet" src="../frontend/assets/mars.jpg" style="width:90px;height:90px" alt="">
+    <div class="cap">An emergency can't wait 40 minutes round-trip.<br><b style="color:#fff">The medical decision must live onboard.</b></div>
+  </div>
+  <div class="cards c5" style="margin-top:9mm">
+    <div class="c red"><b>RADIATION</b><p>cumulative damage</p></div>
+    <div class="c red"><b>ISOLATION</b><p>behavioral health</p></div>
+    <div class="c red"><b>DISTANCE</b><p>no live link</p></div>
+    <div class="c red"><b>GRAVITY</b><p>reflexes & balance</p></div>
+    <div class="c red"><b>CABIN</b><p>fatigue & sleep</p></div>
+  </div>
+  <div class="callout" style="margin-top:9mm">And today's checkups are so tedious they get postponed — what isn't measured is discovered too late.</div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>02 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 3 · THE IDEA ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">02 // THE INSIGHT</span><span class="r">WHY A GAME</span></div>
+  <div class="big" style="margin:4mm 0 8mm">"The exam that gets postponed<br><em>protects no one."</em></div>
+  <div class="pipe">
+    <div class="pbox">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.6"><rect x="3" y="5" width="8" height="14" rx="2"/><rect x="13" y="5" width="8" height="14" rx="2"/><circle cx="7" cy="9" r="1.4" fill="#22d3ee"/><circle cx="17" cy="9" r="1.4" fill="#22d3ee"/></svg>
+      <b>PLAY</b><p>60 s of reaction cards.<br>Measures reflexes & attention.</p>
+    </div>
+    <div class="parr">→</div>
+    <div class="pbox">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.6"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+      <b>THE CAMERA READS</b><p>Eyes, face, pulse, gaze.<br>Without you noticing.</p>
+    </div>
+    <div class="parr">→</div>
+    <div class="pbox">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 12l2 2 4-4" stroke-width="2"/></svg>
+      <b>AUTOMATIC VERDICT</b><p>One color + 3 actions.<br>NASA protocols cited.</p>
+    </div>
+  </div>
+  <div class="callout cy" style="margin-top:9mm">The only monitoring system the crew actually <b>wants</b> to open — because it doesn't feel like being examined.</div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>03 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 4 · THE REAL INTERFACE ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">03 // THE PRODUCT</span><span class="r">REAL CAPTURE — LIVE</span></div>
+  <div style="display:grid;grid-template-columns:1fr 230px;gap:14px;align-items:start">
+    <img class="shot" src="app_main.png" alt="">
+    <div class="cards" style="gap:10px">
+      <div class="c cyan"><b>REAL GAME</b><p>Reaction cards over a space scene built with real NASA photography.</p></div>
+      <div class="c cyan"><b>ONE BUTTON</b><p>PLAY — no forms, no extra steps.</p></div>
+      <div class="c cyan"><b>SENSORS READY</b><p>The camera starts on load — the match is instant.</p></div>
+      <div class="c green"><b>100% LOCAL</b><p>"Nothing leaves the ship" — always visible.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>04 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 5 · SEQUENCE ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">04 // EXPERIENCE</span><span class="r">70 SECONDS A DAY</span></div>
+  <h2>A real session <span class="sub">— from start to verdict</span></h2>
+  <div class="htl">
+    <div class="hs"><div class="dot"></div><div class="t0">T+00:00</div><b>Open</b><p>Sensors already ready.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">T+00:05</div><b>PLAY</b><p>Instant cards.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">T+01:05</div><b>3 questions</b><p>Mood, sleep, crew.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">T+01:10</div><b>Analysis</b><p>Against your baseline.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">T+01:12</div><b>Verdict</b><p>Color + 3 steps.</p></div>
+  </div>
+  <div class="callout cy" style="margin-top:12mm">24 h of health coverage in exchange for ~70 seconds of the astronaut's day.</div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>05 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 6 · TELEMETRY ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">05 // TELEMETRY</span><span class="r">NO EXTRA HARDWARE</span></div>
+  <h2>12 signals, zero sensors <span class="sub">— just the camera and the game</span></h2>
+  <div class="chips" style="margin-top:2mm">
+    <div class="chip"><b>BLINK RATE</b> frequency → alertness</div>
+    <div class="chip"><b>DURATION</b> heavy eyelids</div>
+    <div class="chip"><b>PERCLOS</b> real drowsiness</div>
+    <div class="chip"><b>YAWNS</b> daytime fatigue</div>
+    <div class="chip"><b>ASYMMETRY</b> neuro alert</div>
+    <div class="chip"><b>rPPG</b> pulse via skin</div>
+    <div class="chip"><b>HRV</b> stress / calm</div>
+    <div class="chip"><b>GAZE</b> disengagement</div>
+    <div class="chip"><b>TENSION</b> furrowed brow</div>
+    <div class="chip"><b>SCLERA</b> eye strain</div>
+    <div class="chip"><b>SWAY</b> balance</div>
+    <div class="chip"><b>LATENCY</b> game reflexes</div>
+  </div>
+  <div class="cards c3" style="margin-top:9mm">
+    <div class="c cyan"><b>VOICE OF THE DAY</b><p>3 taps: mood · sleep · crew + symptoms.</p></div>
+    <div class="c green"><b>PASSIVE</b><p>Video is processed in the browser — it never leaves.</p></div>
+    <div class="c amber"><b>DEGRADED</b><p>No camera? The game still measures. Never silence.</p></div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>06 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 7 · ENGINE ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">06 // DECISION ENGINE</span><span class="r">FROM SIGNAL TO VERDICT</span></div>
+  <div class="htl" style="margin-top:2mm">
+    <div class="hs"><div class="dot"></div><div class="t0">STEP 1</div><b>Normalize</b><p>vs your baseline.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">STEP 2</div><b>Classify</b><p>severity + domain.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">STEP 3</div><b>Cross-check</b><p>patterns, not lone symptoms.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">STEP 4</div><b>Consult</b><p>18 NASA protocols.</p></div>
+    <div class="hs"><div class="dot"></div><div class="t0">STEP 5</div><b>Respond</b><p>color + 3 actions.</p></div>
+  </div>
+  <div class="cards c3" style="margin-top:11mm">
+    <div class="c cyan"><b>OWN BASELINE</b><p>Each astronaut vs their own history — the NASA standard, not averages.</p></div>
+    <div class="c cyan"><b>DETERMINISTIC FIRST</b><p>Rules + protocols — the local LLM only narrates. Always answers.</p></div>
+    <div class="c cyan"><b>DECLARES LIMITS</b><p>"Decision support — not diagnosis" — checklist philosophy.</p></div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>07 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 8 · VERDICT ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">07 // THE VERDICT</span><span class="r">INSTRUMENT READOUT</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <div>
+      <div class="gauges" style="grid-template-columns:1fr 1fr">
+        <div class="g"><svg viewBox="0 0 60 34" width="52"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 18 9.6" fill="none" stroke="#22c55e" stroke-width="5"/><circle cx="14" cy="20" r="3.4" fill="#22c55e"/></svg><b style="color:#22c55e">NOMINAL</b><span>keep the plan</span></div>
+        <div class="g"><svg viewBox="0 0 60 34" width="52"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 30 6.4" fill="none" stroke="#a3e635" stroke-width="5"/><circle cx="30" cy="9" r="3.4" fill="#a3e635"/></svg><b style="color:#a3e635">GREEN</b><span>monitor</span></div>
+        <div class="g"><svg viewBox="0 0 60 34" width="52"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 44 9" fill="none" stroke="#f59e0b" stroke-width="5"/><circle cx="44" cy="10" r="3.4" fill="#f59e0b"/></svg><b style="color:#f59e0b">AMBER</b><span>act today</span></div>
+        <div class="g"><svg viewBox="0 0 60 34" width="52"><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#12334d" stroke-width="5"/><path d="M6 30 A24 24 0 0 1 54 30" fill="none" stroke="#ef4444" stroke-width="5"/><circle cx="52" cy="24" r="3.4" fill="#ef4444"/></svg><b style="color:#ef4444">RED</b><span>emergency</span></div>
+      </div>
+      <p style="font-size:8.5pt;color:#4b7ea0;margin-top:10px">Every cited action comes from a real protocol — the astronaut can verify it.</p>
+    </div>
+    <div class="vmock">
+      <div class="vh"><b>RED — ONBOARD EMERGENCY</b></div>
+      <div class="vb">
+        <ol>
+          <li>STOP EVERYTHING. FAST exam + priority medical channel now.</li>
+          <li>Protect your sleep window: 8 h, dark module.</li>
+          <li>Block an 8 h rest, no caffeine beforehand.</li>
+        </ol>
+        <p style="color:#fca5a5;margin-top:6px">⚠ Alert another crew member now.</p>
+        <p style="color:#4b7ea0;margin-top:4px;font-size:7.5pt">— local AI · sources: NASA-STD-3001-4.2.1 / IMG-3.1</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>08 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 9 · KNOWLEDGE + AUTONOMY ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">08 // KNOWLEDGE + AUTONOMY</span><span class="r">THE LIBRARY ONBOARD</span></div>
+  <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:18px">
+    <div>
+      <h2 style="font-size:11pt;margin-bottom:5mm">18 protocols, cited</h2>
+      <div class="chips">
+        <div class="chip"><b>NASA-STD</b> circadian fatigue</div>
+        <div class="chip"><b>NASA-STD</b> PVT / vigilance</div>
+        <div class="chip"><b>NASA-STD</b> hydration</div>
+        <div class="chip"><b>NASA-STD</b> ARED exercise</div>
+        <div class="chip"><b>NASA-STD</b> vestibular</div>
+        <div class="chip"><b>NASA-STD</b> eye fatigue</div>
+        <div class="chip"><b>NASA-STD</b> sleep hygiene</div>
+        <div class="chip"><b>NASA-STD</b> radiation</div>
+        <div class="chip"><b>NASA-STD</b> CO₂</div>
+        <div class="chip"><b>IMG</b> neuro event</div>
+        <div class="chip"><b>IMG</b> in-flight headache</div>
+        <div class="chip"><b>IMG</b> cardiovascular</div>
+        <div class="chip"><b>IMG</b> psychological distress</div>
+        <div class="chip"><b>IMG</b> burnout</div>
+        <div class="chip"><b>IMG</b> signal convergence</div>
+        <div class="chip"><b>BHP</b> isolation support</div>
+        <div class="chip"><b>BHP</b> 4-7-8 breathing</div>
+      </div>
+    </div>
+    <div class="cards" style="gap:9px">
+      <div class="c cyan"><b>NO INTERNET</b><p>Decides onboard — the link arrives too late.</p></div>
+      <div class="c cyan"><b>PRIVATE</b><p>Nothing leaves the ship — mental health belongs to the astronaut.</p></div>
+      <div class="c green"><b>14-DAY TREND</b><p>You against your own baseline.</p></div>
+      <div class="c amber"><b>CALM ON DEMAND</b><p>Guided 4-7-8 breathing when stress climbs.</p></div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:auto;margin-bottom:2mm">In deep space, health software must work like oxygen: always, alone, without asking.</div>
+  <div class="foot"><span>ASTRO-TRIAGE</span><span>09 / 10</span></div>
+</div>
+
+<!-- ============ SLIDE 10 · PITCH ============ -->
+<div class="slide">
+  <div class="topbar"><span class="l">09 // TRANSMISSION TO THE JURY</span><span class="r">CLOSING</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center;margin-top:4mm">
+    <div class="transcript">
+      <div class="line"><span class="who">[00:00]</span> Houston can't answer for twenty minutes. The ship can.</div>
+      <div class="line"><span class="who">[00:15]</span> We turned the medical checkup into a one-minute card game.</div>
+      <div class="line"><span class="who">[00:35]</span> While they play, the camera reads blinks, yawns, tension, pulse and gaze.</div>
+      <div class="line"><span class="who">[00:55]</span> When it ends — without a single button — one color and three steps, citing real NASA protocols.</div>
+      <div class="line"><span class="who">[01:15]</span> One hundred percent onboard. Zero bytes transmitted. Medical autonomy is the mission.</div>
+    </div>
+    <div class="big">"The astronaut doesn't take an exam.<br><em>They play one minute —</em><br><em>the ship learns how they are."</em></div>
+  </div>
+  <div class="foot"><span>ASTRO-TRIAGE · NASA SPACE APPS 2026</span><span>10 / 10</span></div>
+</div>
+
+</body>
+</html>

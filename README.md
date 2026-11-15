@@ -42,6 +42,7 @@ VERDICT      ──► NOMINAL / VERDE / ÁMBAR / ROJO
 - **Degraded mode** — no camera? falls back to game + check-in. Nothing at all? conservative simulated values. The crew always gets an answer.
 - **Jury mode** — `Alt+Shift+1 / 2 / 3` injects NOMINAL / ÁMBAR / ROJO scenarios for demos.
 - **Real space scene** — rotating Earth (NASA Blue Marble), Moon, Mars, Saturn and Eros asteroid imagery, all served locally.
+- **ES / EN toggle** — floating language switch (top-right), persisted in localStorage. Covers UI, game, check-in, signals, verdict text, backend findings/action card and the speech voice (`es-ES` / `en-US`).
 - **Offline-first** — no external services required; optional Ollama for narrated verdicts, optional Qdrant for the vector store.
 
 ## Quickstart
@@ -61,6 +62,7 @@ Open **http://127.0.0.1:8000** → press **▸ JUGAR · 60 s** → the rest happ
 ```
 frontend/ (served by the same backend)
   index.html  console UI — real NASA photo scene, single JUGAR action
+  i18n.js     ES/EN dictionary + Lang/L() helpers (data-i18n attributes)
   game.js     card game → latency / lapses / error rate (PVT-equivalent)
   camera.js   MediaPipe FaceMesh + rPPG → 12 passive bio signals (in-browser)
   app.js      orchestration, signals panel, check-in, verdict, trend, voice
@@ -88,7 +90,7 @@ Env vars `QDRANT_URL`, `OLLAMA_URL`, `OLLAMA_MODEL` point to other hosts.
 
 - `GET /api/status` — mode, indexed protocols, earth-link status
 - `GET /api/protocols` — indexed corpus
-- `POST /api/assessment` — metrics JSON → `{triage_level, findings, composites, action_card, sources, generated_by}`
+- `POST /api/assessment` — metrics JSON → `{triage_level, findings, composites, action_card, sources, generated_by}` — accepts `"lang": "es" | "en"` (findings, steps, severity labels and the action card are returned in that language)
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/assessment \
@@ -100,7 +102,8 @@ curl -X POST http://127.0.0.1:8000/api/assessment \
 
 | File | Contents |
 |---|---|
-| `ASTRO-TRIAGE_DECK.pdf` | 10-slide landscape deck (presentation) |
+| `ASTRO-TRIAGE_DECK.pdf` | 10-slide landscape deck (presentation, ES) |
+| `ASTRO-TRIAGE_DECK_EN.pdf` | Same 10-slide deck, English version |
 | `ASTRO-TRIAGE_DOSSIER.pdf` | 15-page detailed dossier |
 | `RESUMEN_ASTRO-TRIAGE.pdf` | Full feature inventory (3 pages, ES) |
 | `PITCH_V1–V5.pdf` | Five alternative pitch designs |
