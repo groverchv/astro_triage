@@ -77,6 +77,8 @@ const Lang = {
     localStorage.setItem(this.KEY, l);
     Lang.apply();
     Lang.syncToggle();
+    // Re-render del contenido dinámico (señales, veredicto, juego)
+    window.dispatchEvent(new CustomEvent("langchange"));
   },
   t(k) {
     const l = this.get();

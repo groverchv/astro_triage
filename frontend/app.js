@@ -521,6 +521,24 @@ function speakVerdict() {
   speechSynthesis.speak(u);
 }
 
+/* ---------- Cambio de idioma en tiempo real ----------
+   Re-renderiza todo el contenido dinámico ya mostrado. */
+window.addEventListener("langchange", () => {
+  fetchStatus(); // prueba local ("Generado 100% a bordo…")
+  if ($("panelSenales") && !$("panelSenales").classList.contains("hidden")) {
+    renderSignals();
+  }
+  if ($("verdictOut") && !$("verdictOut").classList.contains("hidden")) {
+    runTriage(); // re-evalúa: el backend devuelve hallazgos/tarjeta en el idioma nuevo
+  }
+  if (typeof Game !== "undefined" && Game.relocalize) Game.relocalize();
+  // Estado de la cámara tras captura completada
+  const cm = $("camMsg");
+  if (cm && !cm.classList.contains("hidden") && AppState.bio) {
+    cm.textContent = L("✓ Captura completada", "✓ Capture complete");
+  }
+});
+
 /* ---------- Auto-avance: jugar → señales → check-in NPC → veredicto ---------- */
 AppEvents.on("game", () => {
   renderSignals();

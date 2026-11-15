@@ -30,6 +30,26 @@ const Game = (() => {
 
   const $ = id => document.getElementById(id);
 
+  // Última línea de basal mostrada — se re-escribe al cambiar de idioma
+  let lastBaseline = null;
+  function writeBaseline(b) {
+    lastBaseline = b;
+    const el = $("baselineInfo");
+    if (!el) return;
+    el.textContent = L(
+      `basal: ${b.base.toFixed(0)} ms · media${b.simulated ? "" : " sesión"}: ${b.mean.toFixed(0)} ms ` +
+      `(Δ ${b.deltaPct.toFixed(1)}%) · lapsus>500ms: ${b.lapses} · ${b.simulated ? "simulado" : `trials: ${b.n}`}`,
+      `baseline: ${b.base.toFixed(0)} ms · ${b.simulated ? "mean" : "session mean"}: ${b.mean.toFixed(0)} ms ` +
+      `(Δ ${b.deltaPct.toFixed(1)}%) · lapses>500ms: ${b.lapses} · ${b.simulated ? "simulated" : `trials: ${b.n}`}`);
+  }
+  function relocalize() {
+    if (lastBaseline) writeBaseline(lastBaseline);
+    if (state.done) {
+      capySay(L(`Sesión completada — ${state.score} puntos. Generando análisis…`,
+                `Session complete — ${state.score} points. Running analysis…`));
+    }
+  }
+
   const PRAISE = () => L(["Acierto.", "Preciso.", "Ritmo constante.", "Bien ejecutado."],
                          ["Hit.", "Precise.", "Steady rhythm.", "Well executed."]);
   const OOPS = () => L(["Incorrecto.", "Racha reiniciada.", "Fuera de marca."],
@@ -158,11 +178,8 @@ const Game = (() => {
     AppState.game = result;
     AppEvents.emit("game", result);
 
-    $("baselineInfo").textContent = L(
-      `basal: ${base.toFixed(0)} ms · media sesión: ${mean.toFixed(0)} ms ` +
-      `(Δ ${deltaPct.toFixed(1)}%) · lapsus>500ms: ${lapses} · trials: ${n}`,
-      `baseline: ${base.toFixed(0)} ms · session mean: ${mean.toFixed(0)} ms ` +
-      `(Δ ${deltaPct.toFixed(1)}%) · lapses>500ms: ${lapses} · trials: ${n}`);
+    state.done = true;
+    writeBaseline({ base, mean, deltaPct, lapses, n, simulated: false });
     $("targetSym").textContent = "✓";
     capySay(L(`Sesión completada — ${state.score} puntos. Generando análisis…`,
               `Session complete — ${state.score} points. Running analysis…`));
@@ -176,6 +193,7 @@ const Game = (() => {
     $("gHits").textContent = "0";
     $("gErr").textContent = "0";
     $("gMs").textContent = "×0";
+    state.done = false;
     capySay(L("Sesión en curso.", "Session running."));
     $("btnReto").disabled = true;
 
@@ -210,12 +228,10 @@ const Game = (() => {
     AppState.game = result;
     Bio.simulate(); // también llena AppState.bio
     AppEvents.emit("game", result);
-    $("baselineInfo").textContent = L(
-      `basal: ${base.toFixed(0)} ms · media: ${result.mean_latency_ms} ms ` +
-      `(Δ ${result.latency_delta_pct}%) · lapsus>500ms: ${result.lapse_count} · simulado`,
-      `baseline: ${base.toFixed(0)} ms · mean: ${result.mean_latency_ms} ms ` +
-      `(Δ ${result.latency_delta_pct}%) · lapses>500ms: ${result.lapse_count} · simulated`);
+    state.done = true;
+    writeBaseline({ base, mean: result.mean_latency_ms, deltaPct: result.latency_delta_pct,
+                    lapses: result.lapse_count, n: 0, simulated: true });
   }
 
-  return { start, simulate, DURATION_S };
+  return { start, simulate, relocalize, DURATION_S };
 })();

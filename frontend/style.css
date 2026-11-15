@@ -351,6 +351,46 @@ body {
   position: fixed; inset: 0; z-index: 0;
   overflow: hidden; pointer-events: none;
 }
+
+/* ---------- ESTRELLAS EN PARALAJE — 3 capas, GPU-compositadas ---------- */
+/* cada capa mide viewport + 1 tile de margen: translate(-1 tile) cierra el loop */
+.stars {
+  position: absolute; top: 0; left: 0;
+  width: calc(100% + 1040px); height: calc(100% + 520px);
+  background-repeat: repeat; will-change: transform;
+}
+.stars-far {
+  background-image: url("assets/stars_far.svg");
+  animation: driftFar 190s linear infinite, twinkle 9s ease-in-out infinite alternate;
+  opacity: .8;
+}
+.stars-mid {
+  background-image: url("assets/stars_mid.svg");
+  animation: driftMid 120s linear infinite, twinkle 6s ease-in-out infinite alternate;
+}
+.stars-near {
+  background-image: url("assets/stars_near.svg");
+  animation: driftNear 75s linear infinite, twinkle 4.5s ease-in-out infinite alternate;
+}
+@keyframes driftFar  { to { transform: translate3d(-520px, -260px, 0); } }
+@keyframes driftMid  { to { transform: translate3d(-520px, -260px, 0); } }
+@keyframes driftNear { to { transform: translate3d(-520px, -260px, 0); } }
+@keyframes twinkle { from { opacity: .65; } to { opacity: 1; } }
+
+/* ---------- METEOROS — destello ocasional atravesando el cielo ---------- */
+.meteor {
+  position: absolute; width: 130px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #cfe8ff 70%, #fff);
+  filter: drop-shadow(0 0 4px #a8d4ff);
+  opacity: 0; transform: rotate(-18deg); will-change: transform, opacity;
+}
+.m1 { top: 24%; left: 82%; animation: meteor 11s linear infinite; }
+.m2 { top: 56%; left: 64%; animation: meteor 17s linear infinite 6s; }
+@keyframes meteor {
+  0%, 84% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-18deg); }
+  87%     { opacity: 1; }
+  96%, 100% { opacity: 0; transform: translate3d(-46vw, 15vh, 0) rotate(-18deg); }
+}
 .planet { position: absolute; border-radius: 50%; }
 
 /* ---------- TIERRA — girando (mapa + nubes a velocidad distinta) ---------- */
@@ -423,12 +463,17 @@ body {
     inset 4px 4px 9px rgba(255, 255, 255, .08),
     0 0 14px rgba(120, 160, 220, .12);
 }
-.ast1 { width: 48px; height: 41px; top: 30%; background-position: 20% 30%; animation: driftAst1 95s linear infinite; }
-.ast2 { width: 30px; height: 26px; top: 68%; background-position: 65% 55%; animation: driftAst2 130s linear infinite; }
-.ast3 { width: 66px; height: 56px; top: 46%; background-position: 80% 20%; animation: driftAst3 160s linear infinite; }
+.ast1 { width: 48px; height: 41px; top: 30%; background-position: 20% 30%; animation: driftAst1 62s linear infinite; }
+.ast2 { width: 30px; height: 26px; top: 68%; background-position: 65% 55%; animation: driftAst2 84s linear infinite; }
+.ast3 { width: 66px; height: 56px; top: 46%; background-position: 80% 20%; animation: driftAst3 105s linear infinite; }
+.ast4 { width: 36px; height: 30px; top: 16%; background-position: 40% 70%; animation: driftAst4 95s linear infinite; }
+.ast5 { width: 22px; height: 19px; top: 84%; background-position: 90% 60%; animation: driftAst5 48s linear infinite; }
 @keyframes driftAst1 { from { transform: translateX(-12vw) rotate(0deg); } to { transform: translateX(115vw) translateY(-8vh) rotate(38deg); } }
 @keyframes driftAst2 { from { transform: translateX(-8vw) rotate(0deg); } to { transform: translateX(112vw) translateY(6vh) rotate(-30deg); } }
 @keyframes driftAst3 { from { transform: translateX(-15vw) rotate(0deg); } to { transform: translateX(118vw) translateY(-4vh) rotate(55deg); } }
+/* ast4 cruza en dirección contraria — el campo no se mueve en bloque */
+@keyframes driftAst4 { from { transform: translateX(112vw) rotate(0deg); } to { transform: translateX(-14vw) translateY(7vh) rotate(-44deg); } }
+@keyframes driftAst5 { from { transform: translateX(-10vw) rotate(0deg); } to { transform: translateX(114vw) translateY(-10vh) rotate(70deg); } }
 
 @media (max-width: 900px) {
   .earth { width: 340px; height: 340px; right: -120px; bottom: -140px; }
