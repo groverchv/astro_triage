@@ -182,8 +182,6 @@ const sig = (icon, name, value, status, cls, sub) => ({ icon, name, value, statu
 function buildSignals() {
   const bio = AppState.bio || {};
   const g = AppState.game || {};
-  const hrManual = parseFloat($("hrInput")?.value);
-  const hrBase = 68;
   const out = [];
   const NA = L("sin lectura", "no reading");
   const BPS = L("basal 12-20/min", "baseline 12-20/min");
@@ -279,21 +277,6 @@ function buildSignals() {
     out.push(sig("🎯", L("PRECISIÓN", "ACCURACY"), `${acc}%`, st, cls, `${g.trials || 0} ${L("ensayos", "trials")}`));
   }
 
-  // ❤️ Pulso: rPPG de cámara si hay señal, si no el manual (+ HRV en el sub)
-  const hr = bio.rppg_hr ?? (Number.isFinite(hrManual) ? hrManual : null);
-  const hrvTxt = bio.hrv_rmssd_ms ? L(
-    ` · variabilidad ${bio.hrv_rmssd_ms} ms${bio.hrv_rmssd_ms < 25 ? " (baja)" : ""}`,
-    ` · variability ${bio.hrv_rmssd_ms} ms${bio.hrv_rmssd_ms < 25 ? " (low)" : ""}`) : "";
-  const hrSrc = (bio.rppg_hr ? L("estimado por cámara (rPPG)", "camera-estimated (rPPG)") : "manual/wearable") + hrvTxt;
-  if (hr == null) out.push(sig("❤️", L("PULSO", "PULSE"), "—", L("sin dato", "no data"), CLS.na, L(`basal ${hrBase} lpm`, `baseline ${hrBase} bpm`)));
-  else {
-    const d = (hr - hrBase) / hrBase * 100;
-    const [st, cls] = Math.abs(d) <= 10 ? [L("normal", "normal"), CLS.ok]
-      : d > 10 ? [`+${Math.round(d)}% — ${L("elevado", "elevated")}`, d > 20 ? CLS.bad : CLS.warn]
-      : [`${Math.round(d)}% — ${L("bajo", "low")}`, CLS.warn];
-    out.push(sig("❤️", L("PULSO", "PULSE"), `${hr} ${L("lpm", "bpm")}`, st, cls, hrSrc));
-  }
-
   return out;
 }
 
@@ -368,7 +351,6 @@ const VERDICT_ALL = {
 };
 
 function collectMetrics() {
-  const hr = parseFloat($("hrInput").value);
   const bio = AppState.bio || {};
   return {
     blink_rate: bio.blink_rate ?? null,
@@ -387,7 +369,7 @@ function collectMetrics() {
     latency_delta_pct: AppState.game?.latency_delta_pct ?? null,
     error_rate: AppState.game?.error_rate ?? null,
     lapse_count: AppState.game?.lapse_count ?? null,
-    hr_bpm: Number.isFinite(hr) ? hr : null,
+    hr_bpm: bio.rppg_hr ?? null,
     hr_baseline_bpm: 68,
     notes: AppState.symptoms.size ? "sintomas: " + [...AppState.symptoms].join(", ") : "",
     psych_answers: AppState.psych_answers || [],

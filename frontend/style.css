@@ -171,15 +171,6 @@ body {
 .sig.warn { border-left-color: var(--warn); } .sig.warn .st { color: var(--warn); }
 .sig.bad { border-left-color: var(--crit); } .sig.bad .st { color: var(--crit); }
 .sig.na { border-left-color: var(--dim); } .sig.na .st { color: var(--dim); }
-.hr-row {
-  margin-top: 14px; display: flex; align-items: center; gap: 10px;
-  color: var(--dim); font-size: 12px;
-}
-.hr-row input {
-  width: 70px; background: #05080f; border: 1px solid var(--line);
-  color: var(--txt); font-family: var(--mono); font-size: 17px;
-  padding: 3px 8px; border-radius: 4px;
-}
 
 /* ---------- botones — consola de instrumentos ---------- */
 .btn-row { display: flex; gap: 14px; margin-top: 20px; align-items: center; flex-wrap: wrap; }
