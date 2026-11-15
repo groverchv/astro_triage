@@ -176,21 +176,37 @@ function showHubzyCheckin(onDone) {
         btns.push({ b, kws: kws || [] });
         ans.appendChild(b);
       }
-      // Escucha activa: una palabra clave dispara la opción al instante
+      // Escucha activa: palabra clave o número de opción dispara al instante
       if (voice && SR) {
-        voice.textContent = L("🎙 escuchando… di tu respuesta en voz alta",
-                              "🎙 listening… say your answer out loud");
+        voice.textContent = L("🎙 escuchando… di tu respuesta o «uno / dos / tres»",
+                              "🎙 listening… say your answer or «one / two / three»");
+        // "uno/dos/tres" + ordinales -> índice de botón
+        const NUM = L(
+          { uno: 0, una: 0, "1": 0, primero: 0, primera: 0,
+            dos: 1, "2": 1, segundo: 1, segunda: 1,
+            tres: 2, "3": 2, tercero: 2, tercera: 2 },
+          { one: 0, "1": 0, first: 0,
+            two: 1, "2": 1, second: 1,
+            three: 2, "3": 2, third: 2 });
+        const stripAcc = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
         let fired = false;
-        startVoice(speech => {
-          const norm = speech.toLowerCase();
+        startVoice((speech, isFinal) => {
+          const norm = stripAcc(speech);
           voice.textContent = "🎙 " + speech;
           if (fired) return;
-          for (const { b, kws } of btns) {
-            if (kws.some(k => norm.includes(k))) {
-              fired = true;
-              b.click();
-              break;
+          // match por palabra completa (o prefijo para flexiones: mal/malo/mala)
+          const hit = k => new RegExp(`\\b${stripAcc(k).replace(/\s+/g, "\\s+")}`).test(norm);
+          for (const [w, idx] of Object.entries(NUM)) {
+            if (new RegExp(`\\b${w}\\b`).test(norm) && btns[idx]) {
+              fired = true; btns[idx].b.click(); return;
             }
+          }
+          for (const { b, kws } of btns) {
+            if (kws.some(hit)) { fired = true; b.click(); return; }
+          }
+          if (isFinal) {
+            voice.textContent = L("🎙 no te entendí — intenta de nuevo o toca una opción",
+                                  "🎙 didn't catch that — try again or tap an option");
           }
         });
       }
