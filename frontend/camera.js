@@ -357,7 +357,7 @@ const Bio = (() => {
             msg.classList.remove("hidden");
             msg.textContent = L("Encendiendo la cámara…", "Powering up camera…");
             faceMesh = new FaceMesh({
-              locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`,
+              locateFile: f => `assets/mp/${f}`,
             });
             faceMesh.setOptions({
               maxNumFaces: 1,
